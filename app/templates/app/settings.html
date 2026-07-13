@@ -1,0 +1,63 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Sozlamalar | Codefy{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-extrabold mb-8">Sozlamalar</h1>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="mb-6 px-4 py-3 rounded-xl font-medium
+        {% if msg.tags == 'success' %}bg-accentGreen/10 border border-accentGreen/30 text-accentGreen
+        {% else %}bg-red-500/10 border border-red-500/30 text-red-400{% endif %}">
+        {{ msg }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Update Username -->
+    <div class="bg-bgCard border border-borderSubtle rounded-2xl p-6 mb-6">
+        <h2 class="text-lg font-bold mb-1">Foydalanuvchi nomi</h2>
+        <p class="text-textSecondary text-sm mb-4">Hozirgi nomingiz: <span class="text-accentYellow font-mono font-bold">{{ user.username }}</span></p>
+        <form method="POST" class="flex gap-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_name">
+            <input type="text" name="username" placeholder="Yangi nom..." required
+                class="flex-grow bg-bgSecondary border border-borderSubtle rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-accentYellow transition-colors">
+            <button type="submit"
+                class="bg-accentYellow text-black font-bold px-5 py-2.5 rounded-xl hover:bg-yellow-400 transition-colors text-sm">
+                Saqlash
+            </button>
+        </form>
+    </div>
+
+    <!-- Change Password -->
+    <div class="bg-bgCard border border-borderSubtle rounded-2xl p-6 mb-6">
+        <h2 class="text-lg font-bold mb-1">Parolni o'zgartirish</h2>
+        <p class="text-textSecondary text-sm mb-4">Parolingizni xavfsizroq qiling.</p>
+        <form method="POST" class="space-y-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+            <input type="password" name="old_password" placeholder="Eski parol" required
+                class="w-full bg-bgSecondary border border-borderSubtle rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-accentYellow transition-colors">
+            <input type="password" name="new_password" placeholder="Yangi parol" required
+                class="w-full bg-bgSecondary border border-borderSubtle rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-accentYellow transition-colors">
+            <button type="submit"
+                class="w-full bg-bgSecondary border border-borderSubtle hover:border-accentYellow text-white font-bold py-2.5 rounded-xl transition-colors text-sm">
+                Parolni yangilash
+            </button>
+        </form>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="bg-bgCard border border-red-500/20 rounded-2xl p-6">
+        <h2 class="text-lg font-bold mb-1 text-red-400">Xavfli zona</h2>
+        <p class="text-textSecondary text-sm mb-4">Tizimdan chiqish uchun quyidagi tugmani bosing.</p>
+        <a href="{% url 'logout' %}"
+           class="inline-block border border-red-500/40 text-red-400 hover:bg-red-500/10 font-bold px-5 py-2.5 rounded-xl transition-colors text-sm">
+            Tizimdan chiqish
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,708 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Codefy | Learn to code for the age of AI{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Hide the default base.html header and navs for the landing page */
+    header, nav:not(.landing-nav) { display: none !important; }
+    main { padding-bottom: 0 !important; } /* override base padding */
+    
+    body {
+        background-color: #1c1d35 !important; 
+        color: #fff !important;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Navbar */
+    .landing-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 40px;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        background: #0A192F;
+        border-bottom: 1px solid #1E2D4A;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .nav-links { display: flex; gap: 32px; align-items: center; font-size: 14px; font-weight: 700; }
+    .nav-links a { color: #fff !important; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .nav-links a:hover { color: #a5a4c0 !important; }
+    
+    .nav-actions { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 700; }
+    .nav-actions a { color: #fff !important; text-decoration: none; }
+    
+    .btn-signup-nav {
+        background: #7C4DFF;
+        color: #fff !important;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 0 #5B2EC7;
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-signup-nav:active { transform: translateY(4px); box-shadow: 0 0 0 #5B2EC7; }
+
+    /* Hero Section */
+    .hero-section {
+        min-height: 100vh;
+        padding: 120px 40px 60px;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        color: #fff;
+    }
+    
+    /* Subtle background image effect */
+    .hero-bg {
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 50%;
+        background: linear-gradient(90deg, #1c1d35 0%, rgba(28,29,53,0.8) 50%, rgba(28,29,53,0.3) 100%),
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80') center/cover;
+        z-index: -1;
+        opacity: 0.5;
+    }
+
+    .hero-title {
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        letter-spacing: -1px;
+        color: #fff !important;
+    }
+    .hero-title span { color: #a5a4c0 !important; }
+    
+    .hero-subtitle {
+        font-size: 18px;
+        color: #a5a4c0 !important;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 500px;
+    }
+    
+    /* Goal Cards */
+    .goal-label { font-size: 14px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: #fff; }
+    .goal-card {
+        background: #2D2B52;
+        border: 1px solid #4a4970;
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        max-width: 450px;
+        color: #fff;
+    }
+    .goal-card:hover { border-color: #7C4DFF; background: #353360; }
+    .goal-icon { font-size: 24px; }
+    .goal-title { font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #fff; }
+    .goal-desc { font-size: 13px; color: #a5a4c0 !important; }
+    
+    .loved-by { font-size: 13px; font-weight: 700; color: #a5a4c0 !important; margin-top: 30px; display: flex; align-items: center; gap: 8px; }
+    .stars { color: #FFC800 !important; letter-spacing: 2px; }
+
+    /* Sign Up Box */
+    .signup-box {
+        background: #252347;
+        border: 1px solid #4a4970;
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 420px;
+        margin-left: auto;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        color: #fff;
+    }
+    .signup-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 24px; color: #fff; }
+    
+    .btn-google {
+        background: #fff; color: #1c1d35 !important;
+        width: 100%; border-radius: 12px; padding: 14px;
+        font-weight: 800; font-size: 15px; border: none;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        cursor: pointer; margin-bottom: 24px;
+    }
+    
+    .divider {
+        display: flex; align-items: center; text-align: center; color: #a5a4c0; font-size: 12px; font-weight: 700; margin-bottom: 24px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #4a4970; margin: 0 10px; }
+    
+    .input-field {
+        background: #1c1d35;
+        border: 1px solid #4a4970;
+        color: #fff !important;
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        font-size: 15px;
+        outline: none;
+    }
+    .input-field:focus { border-color: #7C4DFF; }
+    
+    .btn-submit {
+        background: #9d72ff; color: #fff !important;
+        width: 100%; border-radius: 12px; padding: 14px;
+        font-weight: 800; font-size: 15px; border: none;
+        cursor: pointer; box-shadow: 0 4px 0 #7A4CD9;
+        margin-bottom: 16px; transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #7A4CD9; }
+    
+    .terms { font-size: 11px; color: #a5a4c0 !important; text-align: center; }
+    .terms a { color: #a5a4c0 !important; text-decoration: underline; }
+
+    /* HOW IT WORKS SECTION */
+    .how-it-works {
+        padding: 80px 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        color: #fff;
+    }
+    .section-tag { font-size: 12px; font-weight: 800; color: #a5a4c0 !important; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .section-title-large { font-size: 48px; font-weight: 900; margin-bottom: 60px; max-width: 600px; line-height: 1.1; color: #fff !important; }
+    
+    .bento-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    .bento-bottom {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+    }
+    .bento-card {
+        background: #252347;
+        border: 1px solid #313054;
+        border-radius: 24px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        color: #fff;
+    }
+    .bento-main { grid-row: span 3; padding: 0; overflow: hidden; position: relative; }
+    .bento-main img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .bento-label { font-size: 11px; font-weight: 800; color: #9d72ff !important; text-transform: uppercase; margin-bottom: 12px; }
+    .bento-title { font-size: 24px; font-weight: 900; margin-bottom: 12px; color: #fff !important; }
+    .bento-desc { font-size: 14px; color: #a5a4c0 !important; line-height: 1.5; }
+    
+    /* WHAT YOU'LL LEARN (White section) */
+    .learn-section {
+        background: #fff !important;
+        color: #1c1d35 !important;
+        padding: 100px 40px;
+    }
+    .learn-inner { max-width: 1200px; margin: 0 auto; }
+    .learn-section .section-tag { color: #7C4DFF !important; }
+    .learn-section .section-title-large { max-width: 800px; color: #1c1d35 !important; }
+    
+    .paths-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .path-box {
+        border: 2px solid #E8E8F0;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex; flex-direction: column;
+        color: #1c1d35;
+    }
+    .path-box-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+    .path-box-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; color: #1c1d35 !important; }
+    .path-box-desc { font-size: 13px; color: #6B6F8D !important; line-height: 1.5; margin-bottom: 24px; flex-grow: 1; }
+    .path-box-footer { font-size: 12px; font-weight: 700; color: #58CC02 !important; display: flex; align-items: center; gap: 6px; }
+    
+    .courses-bar {
+        border: 2px solid #E8E8F0;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 32px;
+        margin-bottom: 24px;
+    }
+    .course-tag { font-size: 14px; font-weight: 800; color: #1c1d35 !important; display: flex; align-items: center; gap: 8px; }
+    
+    .quiz-banner {
+        background: #D9D2FF;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: #1c1d35;
+    }
+    .quiz-title { font-size: 24px; font-weight: 900; margin-bottom: 12px; color: #1c1d35 !important; }
+    .quiz-desc { font-size: 14px; color: #5c5b7b !important; margin-bottom: 24px; }
+    .btn-quiz {
+        background: #7C4DFF; color: #fff !important;
+        padding: 12px 24px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer;
+    }
+
+    /* AI Section */
+    .ai-section {
+        background: #1c1d35 !important;
+        padding: 100px 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        color: #fff;
+    }
+    .ai-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 60px; }
+    .ai-stat { text-align: right; }
+    .ai-stat-num { font-size: 48px; font-weight: 900; color: #a5a4c0; }
+    .ai-stat-desc { font-size: 14px; color: #a5a4c0; max-width: 200px; }
+    
+    .ai-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    .ai-card {
+        background: #252347;
+        border: 1px solid #313054;
+        border-radius: 24px;
+        padding: 32px;
+    }
+    .ai-card-wide { grid-column: span 2; }
+    
+    /* Reviews Section */
+    .reviews-section {
+        background: #fff;
+        color: #1c1d35;
+        padding: 100px 40px;
+    }
+    .reviews-header {
+        max-width: 1400px; margin: 0 auto 60px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .reviews-badges { display: flex; gap: 40px; }
+    .badge-item { display: flex; flex-direction: column; align-items: center; }
+    .badge-score { font-size: 32px; font-weight: 900; }
+    .badge-stars { color: #1c1d35; letter-spacing: 2px; margin-bottom: 8px; }
+    .badge-name { font-size: 14px; font-weight: 700; color: #6B6F8D; display: flex; align-items: center; gap: 6px; }
+    
+    .reviews-grid {
+        max-width: 1400px; margin: 0 auto;
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    }
+    .review-card {
+        border: 2px solid #E8E8F0;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex; flex-direction: column;
+    }
+    .review-stars { color: #FFC800; margin-bottom: 16px; }
+    .review-text { font-size: 14px; font-weight: 600; line-height: 1.5; margin-bottom: 24px; flex-grow: 1; }
+    .review-author { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 800; color: #6B6F8D; }
+    .author-avatar { width: 24px; height: 24px; border-radius: 50%; background: #F7F7FB; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #1c1d35; }
+
+    @media (max-width: 1024px) {
+        .hero-section { grid-template-columns: 1fr; padding-top: 100px; }
+        .bento-grid, .bento-bottom { grid-template-columns: 1fr; }
+        .bento-main { grid-row: auto; height: 400px; }
+        .paths-grid { grid-template-columns: 1fr 1fr; }
+        .ai-grid { grid-template-columns: 1fr; }
+        .ai-card-wide { grid-column: span 1; }
+        .reviews-header { flex-direction: column; gap: 40px; text-align: center; }
+        .reviews-grid { grid-template-columns: 1fr 1fr; }
+        .landing-nav { display: none; } /* Add mobile menu later if needed */
+    }
+    @media (max-width: 600px) {
+        .paths-grid { grid-template-columns: 1fr; }
+        .reviews-grid { grid-template-columns: 1fr; }
+        .hero-title { font-size: 48px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Transparent Navbar -->
+<nav class="landing-nav">
+    <div class="flex items-center gap-12">
+        <a href="{% url 'index' %}" class="flex items-center gap-2">
+            <img src="{% static 'images/codefy.png' %}" alt="Codefy Logo" class="h-8">
+        </a>
+        <div class="nav-links">
+            <a href="#">Goals <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+            <a href="#">Learn <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+            <a href="#">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+        </div>
+    </div>
+    <div class="nav-actions">
+        <a href="#" style="display:flex; align-items:center; gap:4px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            EN <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </a>
+        <a href="{% url 'login' %}">Log In</a>
+        <a href="{% url 'register' %}" class="btn-signup-nav">Sign up for free</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-bg"></div>
+    
+    <!-- Left -->
+    <div>
+        <h1 class="hero-title">Learn to code<br><span>for the age of AI</span></h1>
+        <p class="hero-subtitle">Learn Python, web development, AI, and other in-demand technologies through interactive lessons & projects</p>
+        
+        <div class="goal-label">Choose your goal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+        
+        {% for goal in goals %}
+        <div class="goal-card" onclick="window.location.href='{% url 'register' %}'">
+            <div class="goal-icon">{{ goal.icon_emoji }}</div>
+            <div>
+                <div class="goal-title">{{ goal.title }}</div>
+                <div class="goal-desc">{{ goal.description }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="loved-by">
+            <span class="stars">★★★★★</span> Loved by 35M+ learners · 750k+ 5-star reviews
+        </div>
+    </div>
+    
+    <!-- Right -->
+    <div>
+        <div class="signup-box">
+            <h2 class="signup-title">Sign up for free</h2>
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+                <button type="button" class="btn-google">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    Sign up with Google
+                </button>
+                
+                <div class="divider">or</div>
+                
+                <input type="email" name="username" class="input-field" placeholder="Your email" required>
+                <!-- Hack: using username as email for standard django model in this quick clone -->
+                <div style="position:relative;">
+                    <input type="password" name="password" class="input-field" placeholder="Your password" required>
+                    <input type="hidden" name="confirm_password" value="temp"> <!-- JS will copy password here -->
+                    <svg style="position:absolute; right:16px; top:16px; color:#a5a4c0;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </div>
+                
+                <button type="submit" class="btn-submit" onclick="document.getElementsByName('confirm_password')[0].value = document.getElementsByName('password')[0].value;">Start learning for free</button>
+                
+                <div class="terms">By signing up, you agree to Codefy's <a href="#">Terms of Service</a>.</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- How it works -->
+<div class="how-it-works">
+    <div class="section-tag">HOW IT WORKS</div>
+    <h2 class="section-title-large">A modern way to learn to code and develop software</h2>
+    
+    <div class="bento-grid">
+        <!-- Big box -->
+        <div class="bento-card bento-main">
+            <!-- Simulated coding UI image -->
+            <div style="background:#1B1A35; width:100%; height:100%; padding:20px; border-radius:12px; display:flex; flex-direction:column;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:40px; color:#a5a4c0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <div style="display:flex; gap:4px;">
+                        <div style="width:20px; height:4px; background:#7C4DFF; border-radius:2px;"></div>
+                        <div style="width:20px; height:4px; background:#313054; border-radius:2px;"></div>
+                        <div style="width:20px; height:4px; background:#313054; border-radius:2px;"></div>
+                        <div style="width:20px; height:4px; background:#313054; border-radius:2px;"></div>
+                    </div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </div>
+                
+                <div style="text-align:center; margin-bottom:40px; font-size:16px; font-weight:700;">How can we adjust the height of an image?</div>
+                
+                <div style="background:#2D2B52; border:2px solid #58CC02; padding:16px; border-radius:12px; margin-bottom:16px; font-family:monospace; display:flex; justify-content:space-between;">
+                    <span>With the <span style="color:#FFC800">height</span> attribute</span>
+                    <span style="color:#a5a4c0">1</span>
+                </div>
+                <div style="background:#252347; border:2px solid #313054; padding:16px; border-radius:12px; margin-bottom:auto; font-family:monospace; display:flex; justify-content:space-between;">
+                    <span>With the <span style="color:#FFC800">&lt;height&gt;</span> tag</span>
+                    <span style="color:#a5a4c0">2</span>
+                </div>
+                
+                <div style="background:#252347; border-top:2px solid #58CC02; padding:20px; border-radius:12px; display:flex; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <svg width="40" height="40" viewBox="0 0 80 100" fill="none"><rect x="15" y="25" width="50" height="45" rx="12" fill="#7C4DFF"/><rect x="22" y="33" width="36" height="28" rx="8" fill="#1E2749"/><path d="M30 44 C30 41,27 40,27 43 C27 46,30 48,30 48 C30 48,33 46,33 43 C33 40,30 41,30 44Z" fill="#58CC02"/><path d="M50 44 C50 41,47 40,47 43 C47 46,50 48,50 48 C50 48,53 46,53 43 C53 40,50 41,50 44Z" fill="#58CC02"/><path d="M33 55 Q40 61 47 55" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+                        <div>
+                            <div style="color:#58CC02; font-weight:800; font-size:14px; margin-bottom:4px;">Lesson solved. Good job!</div>
+                            <div style="font-size:13px; color:#a5a4c0;">Do you want me to explain? ✨ Explain ↵</div>
+                        </div>
+                    </div>
+                    <button style="background:#7C4DFF; border:none; padding:12px 24px; border-radius:12px; color:#fff; font-weight:800;">Continue →</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bento-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <div class="bento-label">LEARN</div>
+                <div style="width:24px; height:24px; border-radius:50%; border:2px solid #4a4970; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#4a4970;">2</div>
+            </div>
+            <div class="bento-title">Step by step guidance</div>
+            <div class="bento-desc">Learn at your own pace with clear explanations and structured paths that guide you through every concept</div>
+        </div>
+        
+        <div class="bento-card" style="justify-content:center;">
+            <div class="bento-label">PRACTICE</div>
+            <div class="bento-title" style="margin:0;">Hands-on practice</div>
+        </div>
+        
+        <div class="bento-card" style="justify-content:center;">
+            <div class="bento-label">BUILD</div>
+            <div class="bento-title" style="margin:0;">Real-world projects</div>
+        </div>
+    </div>
+    
+    <div class="bento-bottom">
+        <div class="bento-card">
+            <div class="bento-label">INTERACTIVE</div>
+            <div style="margin:20px 0 40px; display:flex; justify-content:flex-end;">
+                <div style="background:#313054; padding:8px; border-radius:8px; transform:rotate(-15deg);"><div style="width:40px; height:6px; background:#7C4DFF; border-radius:3px;"></div></div>
+                <div style="background:#313054; padding:8px; border-radius:8px; transform:rotate(10deg); margin-left:-10px; margin-top:20px;"><div style="width:60px; height:6px; background:#58CC02; border-radius:3px;"></div></div>
+            </div>
+            <div class="bento-title">Learn by doing</div>
+            <div class="bento-desc">You learn through clear instructions and explanations by writing real code and solving problems like a software developer</div>
+        </div>
+        
+        <div class="bento-card">
+            <div class="bento-label">PERSONALIZED</div>
+            <div style="margin:20px 0 40px; display:flex; justify-content:flex-end;">
+                <svg width="60" height="60" viewBox="0 0 80 100" fill="none"><rect x="15" y="25" width="50" height="45" rx="12" fill="#e8e8f0"/><rect x="22" y="33" width="36" height="28" rx="8" fill="#1E2749"/><path d="M33 55 Q40 61 47 55" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="30" cy="45" r="4" fill="#00d4ff"/><circle cx="50" cy="45" r="4" fill="#00d4ff"/></svg>
+            </div>
+            <div class="bento-title">Get AI-powered guidance</div>
+            <div class="bento-desc">With precise feedback and hints that adapt to your progress, Codefy helps you keep moving forward when you're stuck</div>
+        </div>
+        
+        <div class="bento-card">
+            <div class="bento-label">CAREER-ORIENTED</div>
+            <div style="margin:20px 0 40px; display:flex; justify-content:flex-end;">
+                <svg width="80" height="60" viewBox="0 0 100 80">
+                    <rect x="10" y="30" width="80" height="40" fill="#fff" rx="4"/>
+                    <rect x="20" y="40" width="40" height="4" fill="#E8E8F0"/>
+                    <rect x="20" y="50" width="30" height="4" fill="#E8E8F0"/>
+                    <circle cx="80" cy="30" r="16" fill="#FFC800"/>
+                    <text x="80" y="34" font-size="24" text-anchor="middle" font-family="sans-serif">★</text>
+                </svg>
+            </div>
+            <div class="bento-title">Reach professional goals</div>
+            <div class="bento-desc">Build a portfolio, earn certificates, and join live sessions designed to help you move toward a career in software development</div>
+        </div>
+    </div>
+</div>
+
+<!-- What you'll learn (White Background) -->
+<div class="learn-section">
+    <div class="learn-inner">
+        <div class="section-tag">WHAT YOU'LL LEARN</div>
+        <h2 class="section-title-large">In-demand skills for modern software development</h2>
+        
+        <div class="paths-grid">
+            {% for path in paths %}
+            <div class="path-box">
+                <div class="path-box-header">
+                    <div style="font-size:10px; font-weight:800; color:#6B6F8D;">CAREER PATH</div>
+                    <div style="background:#1c1d35; padding:8px; border-radius:8px; font-size:20px;">{{ path.icon_emoji }}</div>
+                </div>
+                <div class="path-box-title">{{ path.title }}</div>
+                <div class="path-box-desc">{{ path.description }}</div>
+                <div class="path-box-footer">{% if path.is_beginner_friendly %}✓ Beginner friendly{% endif %}</div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="font-size:10px; font-weight:800; color:#6B6F8D; margin-bottom:12px;">COURSES</div>
+        <div class="courses-bar">
+            {% for tech in tech_tags %}
+            <span class="course-tag">
+                <span style="color:{{ tech.icon_color }};{% if tech.is_custom_bg %} background:#000; padding:2px; border-radius:4px; font-size:10px;{% else %} font-size:18px;{% endif %}">{{ tech.icon_content }}</span> {{ tech.name }}
+            </span>
+            {% endfor %}
+        </div>
+        
+        <div class="quiz-banner">
+            <div class="quiz-title">Not sure where to start?</div>
+            <div class="quiz-desc">Take a quick quiz to find what fits your goals. It only takes a few minutes.</div>
+            <button class="btn-quiz" onclick="window.location.href='{% url 'register' %}'">Take the quiz</button>
+            <div style="position:absolute; bottom:-20px; right:40px;">
+                <svg width="80" height="100" viewBox="0 0 80 100" fill="none"><rect x="15" y="25" width="50" height="45" rx="12" fill="#fff"/><rect x="22" y="33" width="36" height="28" rx="8" fill="#1E2749"/><path d="M33 55 Q40 61 47 55" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="30" cy="45" r="4" fill="#fff"/><circle cx="50" cy="45" r="4" fill="#fff"/></svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Section -->
+<div class="ai-section">
+    <div class="ai-header">
+        <h2 class="section-title-large" style="margin:0;">Software development with AI where you stay in control</h2>
+        <div class="ai-stat">
+            <div class="ai-stat-num">84%</div>
+            <div class="ai-stat-desc">of software developers use AI in their workflows</div>
+        </div>
+    </div>
+    
+    <div class="ai-grid">
+        <!-- Guided Learning -->
+        <div class="ai-card">
+            <div class="bento-label">LEARN</div>
+            <div class="bento-title" style="font-size:20px;">Guided learning</div>
+            <div class="bento-desc" style="margin-bottom:24px;">Get explanations, hints, and reviews that help you understand your code, spot issues, and learn as you build</div>
+            
+            <div style="background:#1B1A35; padding:16px; border-radius:12px; font-family:monospace; color:#a5a4c0; font-size:13px;">
+                &lt;html&gt;<br>
+                &lt;head&gt;<br>
+                &nbsp;&nbsp;&lt;link rel="stylesheet" href="./style.css" /&gt;<br>
+                &lt;/head&gt;<br>
+                &lt;body&gt;<br>
+                <br>
+                &nbsp;&nbsp;&lt;div id="root"&gt;Loading...&lt;/div&gt;<br>
+                &lt;/html&gt;
+            </div>
+            <div style="background:#313054; padding:16px; border-radius:12px; margin-top:-20px; position:relative; margin-left:20px; box-shadow:0 10px 20px rgba(0,0,0,0.3);">
+                <div style="color:#FF4B4B; font-weight:800; font-size:13px; margin-bottom:4px;">⚠ Syntax Error</div>
+                <div style="color:#fff; font-size:12px; margin-bottom:12px;">Line 8: Missing closing body tag &lt;/body&gt;</div>
+                <div style="display:flex; gap:8px;">
+                    <button style="background:transparent; border:1px solid #7C4DFF; color:#7C4DFF; padding:6px 12px; border-radius:6px; font-size:11px; font-weight:800;">Explain further</button>
+                    <button style="background:#7C4DFF; border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:11px; font-weight:800;">Try to fix</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Assisted Coding -->
+        <div class="ai-card">
+            <div class="bento-label">PRACTICE</div>
+            <div class="bento-title" style="font-size:20px;">Assisted coding</div>
+            <div class="bento-desc" style="margin-bottom:24px;">Use AI to write, refactor, and document code while being able to review and understand any changes</div>
+            
+            <div style="background:#1B1A35; padding:16px; border-radius:12px; font-family:monospace; color:#a5a4c0; font-size:13px;">
+                chars = sorted(list(set("".join(words))))<br>
+                stoi = {s:i+1 for i,s in enumerate(chars)}<br>
+                stoi['.'] = 0<br>
+                <span style="background:rgba(124,77,255,0.3); color:#fff; padding:2px 4px; border-radius:4px;">itos = {i:s for s,i in stoi.items()}</span>
+            </div>
+            <div style="background:#313054; padding:16px; border-radius:12px; margin-top:-20px; position:relative; margin-left:40px; box-shadow:0 10px 20px rgba(0,0,0,0.3);">
+                <div style="color:#fff; font-weight:800; font-size:13px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C4DFF" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    AI Explanation
+                </div>
+                <div style="color:#a5a4c0; font-size:12px; margin-bottom:12px; font-family:monospace;">itos = {i:s for s,i in stoi.items()}</div>
+                <div style="color:#fff; font-size:12px;">This code is creating two dictionaries for character-to-integer and integer-to-character mappings.</div>
+            </div>
+        </div>
+        
+        <!-- Build / IDE -->
+        <div class="ai-card ai-card-wide">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <div class="bento-label">BUILD</div>
+                    <div class="bento-title" style="font-size:20px;">AI-powered software development</div>
+                    <div class="bento-desc" style="margin-bottom:24px; max-width:400px;">Build complete projects in an AI-powered coding environment designed to reflect how software is developed today</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:20px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px;">
+                        <span style="color:#4285F4">✦</span> Gemini
+                    </div>
+                    <div style="font-size:10px; color:#a5a4c0;">Powered by a frontier coding agent</div>
+                </div>
+            </div>
+            
+            <div style="background:#1B1A35; border:1px solid #313054; border-radius:12px; height:250px; display:flex; overflow:hidden;">
+                <!-- IDE Sidebar -->
+                <div style="width:250px; background:#1c1d35; border-right:1px solid #313054; padding:16px;">
+                    <div style="font-size:11px; font-weight:800; color:#fff; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C4DFF" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        AI Coding Tutor
+                    </div>
+                    <div style="background:#252347; padding:12px; border-radius:8px; font-size:12px; color:#a5a4c0; margin-bottom:12px;">
+                        How can I help you?
+                    </div>
+                    <div style="background:#313054; padding:12px; border-radius:8px; font-size:12px; color:#fff; margin-left:20px;">
+                        What's the best way to center the image in the hero section?
+                    </div>
+                </div>
+                <!-- IDE Editor -->
+                <div style="flex:1; padding:16px; font-family:monospace; color:#a5a4c0; font-size:13px; line-height:1.6;">
+                    <div style="display:flex; gap:16px; border-bottom:1px solid #313054; padding-bottom:8px; margin-bottom:16px;">
+                        <span style="color:#fff; border-bottom:2px solid #7C4DFF; padding-bottom:8px;">index.html</span>
+                        <span>style.css</span>
+                        <span>script.js</span>
+                    </div>
+                    1 &lt;!DOCTYPE html&gt;<br>
+                    2 &lt;html&gt;<br>
+                    3 &lt;body&gt;<br>
+                    <span style="color:#fff;">4 &nbsp;&nbsp;&lt;h1&gt;Nina Davidson&lt;/h1&gt;</span><br>
+                    5 &nbsp;&nbsp;&lt;div&gt;<br>
+                    6 &nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;Home&lt;/a&gt;<br>
+                    7 &nbsp;&nbsp;&lt;/div&gt;<br>
+                    8 &nbsp;&nbsp;&lt;img src="/cat.png" /&gt;
+                </div>
+                <!-- IDE Preview -->
+                <div style="width:300px; background:#fff; color:#1c1d35; padding:20px;">
+                    <h1 style="font-size:24px; font-weight:800; margin-bottom:16px;">Nina Davidson</h1>
+                    <div style="display:flex; gap:16px; font-size:12px; font-weight:700; color:#7C4DFF; margin-bottom:24px;">
+                        <span>Home</span> <span>Portfolio</span> <span>Get in touch</span>
+                    </div>
+                    <div style="font-size:14px; font-weight:700; margin-bottom:16px;">I'm Nina and I'm a freelance web designer.</div>
+                    <div style="width:100px; height:100px; background:#f0f0f0; margin-bottom:16px; border-radius:8px; display:flex; align-items:center; justify-content:center;">🐱</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="reviews-section">
+    <div class="reviews-header">
+        <h2 class="section-title-large" style="margin:0; max-width:400px;">Trusted by 35+ million learners around the world</h2>
+        <div class="reviews-badges">
+            <div class="badge-item">
+                <div class="badge-score">4.9/5</div>
+                <div class="badge-stars">★★★★★</div>
+                <div class="badge-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.79 3.59-.76 2.45.06 3.91 1.25 4.34 1.48-2.62 1.48-2.22 4.96.22 5.92-.61 1.76-1.53 3.55-3.23 5.53zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg> App Store</div>
+            </div>
+            <div class="badge-item">
+                <div class="badge-score">4.9/5</div>
+                <div class="badge-stars">★★★★★</div>
+                <div class="badge-name">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v17l-9-4.5L3 20.5z" fill="#4285F4"/><path d="M10.5 14.5l-4-4 1.5-1.5 2.5 2.5 6-6 1.5 1.5-7.5 7.5z" fill="#34A853"/></svg>
+                    Google Play
+                </div>
+            </div>
+            <div class="badge-item">
+                <div class="badge-score">4.7/5</div>
+                <div class="badge-stars">★★★★★</div>
+                <div class="badge-name"><span style="color:#00B67A; font-size:16px;">★</span> Trustpilot</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="reviews-grid">
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-stars">{% for i in "12345" %}★{% endfor %}</div>
+            <div class="review-text">{{ review.text }}</div>
+            <div class="review-author"><div class="author-avatar" style="background:{{ review.avatar_bg_color }}; color:{{ review.avatar_text_color }};">{{ review.author_initials }}</div> {{ review.author_name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

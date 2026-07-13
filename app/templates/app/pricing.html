@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codefy | Pricing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #2b1f48 0%, #1f1e3c 100%);
+            color: #FFFFFF;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: #FFC800;
+            color: #1E2749;
+            text-align: center;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Mascot */
+        .mascot-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 100px;
+        }
+
+        /* Toggle */
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .save-badge {
+            position: absolute;
+            top: -30px;
+            right: -60px;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Hand-drawn look */
+            font-size: 14px;
+            color: #fff;
+            transform: rotate(5deg);
+        }
+        .toggle-bg {
+            background: #1B1A35;
+            border-radius: 99px;
+            display: inline-flex;
+            padding: 4px;
+            border: 1px solid #4a4970;
+        }
+        .toggle-btn {
+            padding: 10px 30px;
+            border-radius: 99px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #a5a4c0;
+            transition: 0.3s;
+        }
+        .toggle-btn.active {
+            background: #9d72ff;
+            color: #fff;
+        }
+
+        /* Cards Container */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: stretch;
+            padding-bottom: 40px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: #1F1E3C;
+            border: 2px solid #4a4970;
+            border-radius: 20px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .card.pro {
+            border-color: #FFC800;
+            background: #252347;
+            transform: translateY(-10px);
+        }
+
+        /* Card Top Tag */
+        .card-tag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #FFC800;
+            color: #1E2749;
+            font-weight: 800;
+            font-size: 13px;
+            text-align: center;
+            padding: 8px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+        .card.pro { padding-top: 50px; }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .card-title { font-size: 24px; font-weight: 900; }
+        .card-title.purple { color: #9d72ff; text-transform: lowercase; }
+
+        .card-desc {
+            font-size: 14px;
+            color: #a5a4c0;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            min-height: 63px;
+        }
+
+        /* Pricing */
+        .card-price-container { margin-bottom: 24px; }
+        .card-price { font-size: 32px; font-weight: 900; display: flex; align-items: center; gap: 8px;}
+        .card-price-old { font-size: 18px; color: #a5a4c0; text-decoration: line-through; }
+        .card-price-period { font-size: 12px; color: #a5a4c0; margin-top: 4px;}
+
+        /* Card Buttons */
+        .card-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 24px;
+            transition: 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4a4970;
+            color: #fff;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        .btn-yellow {
+            background: #FFC800;
+            color: #1E2749;
+            box-shadow: 0 4px 0 #CC9F00;
+        }
+        .btn-yellow:active { transform: translateY(4px); box-shadow: 0 0 0 #CC9F00; }
+        .btn-purple {
+            background: #9d72ff;
+            color: #fff;
+            box-shadow: 0 4px 0 #7A4CD9;
+        }
+        .btn-purple:active { transform: translateY(4px); box-shadow: 0 0 0 #7A4CD9; }
+
+        /* Features List */
+        .features-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .feature-icon {
+            color: #fff;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .bottom-link {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .mascot-wrapper { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-banner">
+        🔥 20% OFF <span id="countdown">01:23:57:44</span>
+    </div>
+
+    <div class="container">
+        
+        <!-- Mascot -->
+        <div class="mascot-wrapper">
+            <svg viewBox="0 0 100 120" fill="none">
+                <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                <path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                <path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                <path d="M50 52 L53 55 L50 58 L47 55 Z" fill="#00d4ff"/>
+            </svg>
+        </div>
+
+        <!-- Toggle -->
+        <div class="toggle-container">
+            <div class="toggle-bg">
+                <button class="toggle-btn" onclick="window.location.href='{% url 'dashboard' %}'">Monthly</button>
+                <button class="toggle-btn active">Yearly</button>
+            </div>
+            <div class="save-badge">
+                Save 37% and get 7 days free ⤵
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-grid">
+            
+            <!-- Basic -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Basic</div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                </div>
+                <div class="card-desc">Learn the basics and see if software development is for you</div>
+                <div class="card-price-container">
+                    <div class="card-price">Free</div>
+                    <div class="card-price-period">Forever</div>
+                </div>
+                <button class="card-btn btn-outline" onclick="window.location.href='{% url 'dashboard' %}'">Continue with Basic</button>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Learn for free on mobile</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Intro lessons on web</div>
+                </div>
+            </div>
+
+            <!-- Pro -->
+            <div class="card pro">
+                <div class="card-tag">🔥 20% OFF <span class="countdown-mini">01:23:57:44</span></div>
+                <div class="card-header">
+                    <div class="card-title purple">pro</div>
+                    <div style="display:flex; gap:8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg>
+                        <svg width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                </div>
+                <div class="card-desc">Learn without limits and make real progress toward your goals</div>
+                <div class="card-price-container">
+                    <div class="card-price">€7.99 <span class="card-price-old">€9.99</span></div>
+                    <div class="card-price-period">/month billed yearly</div>
+                </div>
+                <!-- This goes to dashboard via API just to simulate -->
+                <button class="card-btn btn-yellow" onclick="upgradeToPro()">Start 7-day free trial</button>
+                
+                <div class="features-title">Everything in Basic, plus:</div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>1000+ interactive lessons</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Certificates of completion</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>No ads</div>
+                </div>
+            </div>
+
+            <!-- Max -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title purple">max</div>
+                    <div style="display:flex; gap:8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg>
+                        <svg width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                </div>
+                <div class="card-desc">Follow the fastest path to becoming a software developer</div>
+                <div class="card-price-container">
+                    <div class="card-price">€24.99</div>
+                    <div class="card-price-period">/month billed yearly</div>
+                </div>
+                <button class="card-btn btn-purple" onclick="upgradeToPro()">Start 7-day free trial</button>
+                
+                <div class="features-title">Everything in Pro, plus:</div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Guided projects</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Professional certificates</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <div>Live sessions</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom-link">
+            v See all features
+        </div>
+    </div>
+
+    <script>
+        // Simple countdown visually changing seconds
+        setInterval(() => {
+            let el = document.getElementById('countdown');
+            if(el) {
+                let parts = el.innerText.split(':');
+                let s = parseInt(parts[3]) - 1;
+                if(s < 0) s = 59;
+                parts[3] = s.toString().padStart(2, '0');
+                el.innerText = parts.join(':');
+                document.querySelector('.countdown-mini').innerText = el.innerText;
+            }
+        }, 1000);
+
+        function upgradeToPro() {
+            fetch("{% url 'upgrade_pro' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(r => r.json()).then(data => {
+                window.location.href = "{% url 'dashboard' %}";
+            });
+        }
+    </script>
+</body>
+</html>

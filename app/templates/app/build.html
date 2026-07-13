@@ -1,0 +1,385 @@
+{% extends 'app/base.html' %}
+{% block title %}Build IDE | Codefy{% endblock %}
+
+{% block extra_head %}
+<!-- Pyodide -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<!-- Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+<style>
+    body { background-color: #1c1d35 !important; color: #FFFFFF !important; margin: 0; overflow: hidden; }
+    nav { display: none !important; }
+    
+    .ide-header { height: 50px; background: #252347; border-bottom: 1px solid #313054; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .btn-icon { color: #a5a4c0; cursor: pointer; transition: 0.2s; background: none; border: none; font-size: 18px; }
+    .btn-icon:hover { color: #fff; }
+    .project-name { font-size: 13px; font-weight: 600; color: #a5a4c0; }
+    .project-name span { color: #fff; margin-left: 4px; outline: none; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .btn-share { background: #9d72ff; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    
+    .ide-layout { display: flex; height: calc(100vh - 50px); }
+    
+    /* Sidebar */
+    .sidebar { width: 260px; background: #252347; border-right: 1px solid #313054; display: flex; flex-direction: column; }
+    .section-header { padding: 12px 16px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #313054; }
+    
+    .file-list { flex-grow: 1; padding: 8px; overflow-y: auto; }
+    .file-item { padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #a5a4c0; margin-bottom: 4px; }
+    .file-item:hover { background: #313054; color: #fff; }
+    .file-item.active { background: #3d3b66; color: #fff; border-left: 3px solid #FFC800; }
+    
+    /* AI Chat */
+    .ai-chat-section { border-top: 1px solid #313054; background: #2D2B52; height: 300px; display: flex; flex-direction: column; }
+    .chat-messages { flex-grow: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .chat-msg { font-size: 12px; line-height: 1.5; color: #fff; }
+    .chat-msg.bot { background: #3d3b66; padding: 12px; border-radius: 8px 8px 8px 0; }
+    .chat-msg.user { background: #9d72ff; padding: 12px; border-radius: 8px 8px 0 8px; align-self: flex-end; max-width: 80%; }
+    .chat-input { display: flex; padding: 12px; background: #252347; border-top: 1px solid #313054; }
+    .chat-input input { flex-grow: 1; background: #1c1d35; border: 1px solid #4a4970; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none; }
+    .chat-input button { background: none; border: none; color: #9d72ff; cursor: pointer; font-weight: 800; padding: 0 8px; }
+    
+    /* Editor */
+    .editor-container { flex-grow: 1; background: #1E1E1E; display: flex; flex-direction: column; position: relative; }
+    .editor-tabs { background: #252526; display: flex; border-bottom: 1px solid #1E1E1E; overflow-x: auto; }
+    .tab { background: #2D2D2D; color: #969696; padding: 10px 16px; font-size: 12px; font-weight: 600; border-right: 1px solid #1E1E1E; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .tab.active { background: #1E1E1E; color: #fff; border-top: 1px solid #FFC800; }
+    .editor-area { flex-grow: 1; width: 100%; position: relative; }
+    #monaco-container { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+    
+    .btn-run { position: absolute; bottom: 20px; right: 20px; background: #58CC02; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; z-index: 10; box-shadow: 0 4px 0 #46A302; transition: 0.1s; }
+    .btn-run:active { transform: translateY(4px); box-shadow: 0 0 0 #46A302; }
+    .btn-run:disabled { background: #a5a4c0; box-shadow: 0 4px 0 #6c6c80; cursor: not-allowed; }
+    
+    /* Console */
+    .console-sidebar { width: 320px; background: #1c1d35; border-left: 1px solid #313054; display: flex; flex-direction: column; }
+    .console-empty { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
+    .console-icon { font-size: 32px; color: #5c5b7b; margin-bottom: 16px; }
+    .console-text { font-size: 12px; color: #a5a4c0; line-height: 1.5; }
+    
+    #console-out { display: none; flex-grow: 1; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #fff; overflow-y: auto; background: #0c0c16; white-space: pre-wrap; }
+    .out-line { margin-bottom: 4px; }
+    .out-error { color: #FF4B4B; }
+    .out-system { color: #58CC02; font-style: italic; opacity: 0.8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ide-header">
+    <div class="header-left">
+        <button class="btn-icon" onclick="window.location.href='{% url 'dashboard' %}'">←</button>
+        <div class="project-name">Projects / <span contenteditable="true">Untitled Project</span></div>
+    </div>
+    <div class="header-right">
+        <span id="save-status" style="color: #a5a4c0; font-size: 12px; margin-right: 12px;">Saved</span>
+        <button class="btn-share" onclick="alert('Loyihangiz muvaffaqiyatli ulashildi!')">Ulashish</button>
+        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(45deg, #FFC800, #ff7878);"></div>
+    </div>
+</div>
+
+<div class="ide-layout">
+    
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="section-header">
+            <span>Files</span>
+            <button class="btn-icon" style="font-size:14px;" onclick="newFile()">+</button>
+        </div>
+        <div class="file-list" id="file-list">
+            <!-- Files injected here -->
+        </div>
+        
+        <div class="ai-chat-section">
+            <div class="section-header">
+                <span>AI Tutor</span>
+                <button class="btn-icon" style="font-size:14px;" onclick="clearChat()">🗑️</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-msg bot">
+                    <div style="font-weight:800; margin-bottom:4px; font-size:14px;">🤖 Codefy AI</div>
+                    Salom 👋 Men Codefy AI yordamchiman. Kod yozishda, xatolarni topishda yoki tushunmagan joylaringizni tushuntirishda yordam bera olaman! Qanday yordam kerak?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Ask AI anything..." onkeypress="if(event.key==='Enter') sendChat()">
+                <button onclick="sendChat()">➤</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Editor -->
+    <div class="editor-container">
+        <div class="editor-tabs" id="editor-tabs">
+            <!-- Tabs injected here -->
+        </div>
+        <div class="editor-area">
+            <div id="monaco-container"></div>
+        </div>
+        <button class="btn-run" id="btn-run" onclick="runPython()">
+            ▶ Run
+        </button>
+    </div>
+    
+    <!-- Console -->
+    <div class="console-sidebar">
+        <div class="section-header">
+            <span>Console</span>
+            <button class="btn-icon" style="font-size:14px;" onclick="clearConsole()">🗑️</button>
+        </div>
+        
+        <div class="console-empty" id="console-empty">
+            <div class="console-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><polyline points="6 8 10 12 6 16"></polyline><line x1="14" y1="16" x2="18" y2="16"></line></svg>
+            </div>
+            <div class="console-text">Your console output will appear here when you run the project.<br><br>Wait for Python to load...</div>
+        </div>
+        
+        <div id="console-out"></div>
+    </div>
+</div>
+
+<script>
+    // System State
+    let pyodideReady = false;
+    let pyodideInstance = null;
+    let editor = null;
+    let currentFile = 'script.py';
+    
+    // Virtual File System (DB powered)
+    let files = {};
+    let fileIds = {};
+    {% for f in files %}
+        files["{{ f.name|escapejs }}"] = `{{ f.content|escapejs }}`;
+        fileIds["{{ f.name|escapejs }}"] = {{ f.id }};
+    {% endfor %}
+    
+    currentFile = Object.keys(files)[0] || 'index.html';
+    
+    let saveTimeout = null;
+    const saveStatus = document.getElementById('save-status');
+
+    function saveFiles() {
+        if(editor) {
+            files[currentFile] = editor.getValue();
+        }
+        
+        let fileId = fileIds[currentFile];
+        if (fileId) {
+            saveStatus.innerText = "Saqlanmoqda...";
+            fetch('{% url "save_project_file" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    file_id: fileId,
+                    content: files[currentFile]
+                })
+            }).then(response => response.json()).then(data => {
+                if(data.success) {
+                    saveStatus.innerText = "Saqlandi";
+                } else {
+                    console.error("Error saving project:", data.error);
+                    saveStatus.innerText = "Xato";
+                }
+            }).catch(e => {
+                saveStatus.innerText = "Xato";
+            });
+        }
+    }
+
+    // Initialize Monaco Editor
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+        editor = monaco.editor.create(document.getElementById('monaco-container'), {
+            value: files[currentFile] || '',
+            language: getLanguage(currentFile),
+            theme: 'vs-dark',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14,
+            fontFamily: "'JetBrains Mono', monospace"
+        });
+        
+        editor.onDidChangeModelContent(() => {
+            files[currentFile] = editor.getValue();
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveStatus.innerText = "Yozilmoqda...";
+            saveTimeout = setTimeout(saveFiles, 1500);
+        });
+        
+        renderFiles();
+    });
+
+    // Render Files Sidebar and Tabs
+    function renderFiles() {
+        const fileList = document.getElementById('file-list');
+        const tabList = document.getElementById('editor-tabs');
+        fileList.innerHTML = '';
+        tabList.innerHTML = '';
+        
+        for(let fileName in files) {
+            // Sidebar Item
+            const item = document.createElement('div');
+            item.className = `file-item ${fileName === currentFile ? 'active' : ''}`;
+            item.innerHTML = `<span style="color:#FFC800;">📄</span> ${fileName}`;
+            item.onclick = () => switchFile(fileName);
+            fileList.appendChild(item);
+            
+            // Editor Tab
+            const tab = document.createElement('div');
+            tab.className = `tab ${fileName === currentFile ? 'active' : ''}`;
+            tab.innerHTML = `<span style="color:#FFC800;">📄</span> ${fileName}`;
+            tab.onclick = () => switchFile(fileName);
+            tabList.appendChild(tab);
+        }
+    }
+
+    function getLanguage(fileName) {
+        if (fileName.endsWith('.html')) return 'html';
+        if (fileName.endsWith('.css')) return 'css';
+        if (fileName.endsWith('.js')) return 'javascript';
+        if (fileName.endsWith('.py')) return 'python';
+        return 'plaintext';
+    }
+
+    function switchFile(fileName) {
+        if(editor && currentFile !== fileName) {
+            currentFile = fileName;
+            editor.setValue(files[fileName]);
+            monaco.editor.setModelLanguage(editor.getModel(), getLanguage(fileName));
+            renderFiles();
+        }
+    }
+
+    function newFile() {
+        const name = prompt("Enter file name (e.g., utils.py):");
+        if(name && !files[name]) {
+            files[name] = "# New file\n";
+            saveFiles();
+            switchFile(name);
+        }
+    }
+
+    // Console System
+    const consoleOut = document.getElementById('console-out');
+    const consoleEmpty = document.getElementById('console-empty');
+
+    function appendToConsole(text, type='normal') {
+        consoleEmpty.style.display = 'none';
+        consoleOut.style.display = 'block';
+        
+        const div = document.createElement('div');
+        div.className = `out-line ${type === 'error' ? 'out-error' : type === 'system' ? 'out-system' : ''}`;
+        div.textContent = text;
+        consoleOut.appendChild(div);
+        consoleOut.scrollTop = consoleOut.scrollHeight;
+    }
+
+    function clearConsole() {
+        consoleOut.innerHTML = '';
+        consoleOut.style.display = 'none';
+        consoleEmpty.style.display = 'flex';
+        document.querySelector('.console-text').innerHTML = "Your console output will appear here when you run the project.<br><br>Press 🗑️ to clear your logs.";
+    }
+
+    // Initialize Pyodide
+    async function initPyodide() {
+        const btn = document.getElementById('btn-run');
+        btn.disabled = true;
+        btn.innerHTML = '↻ Loading Python...';
+        
+        pyodideInstance = await loadPyodide();
+        
+        // Patch sys.stdout to our UI console
+        pyodideInstance.runPython(`
+            import sys
+            import js
+
+            class CustomStdout:
+                def write(self, text):
+                    if text != '\\n':
+                        js.appendToConsole(text.rstrip('\\n'))
+                def flush(self):
+                    pass
+
+            sys.stdout = CustomStdout()
+            sys.stderr = CustomStdout()
+        `);
+        
+        pyodideReady = true;
+        btn.disabled = false;
+        btn.innerHTML = '▶ Run';
+        document.querySelector('.console-text').innerHTML = "Python Ready!<br>Click Run to execute your code.";
+    }
+
+    // Run Python Code
+    async function runPython() {
+        if(!pyodideReady || !editor) return;
+        
+        const code = editor.getValue();
+        const btn = document.getElementById('btn-run');
+        
+        btn.disabled = true;
+        btn.innerHTML = '⚙️ Running...';
+        appendToConsole(`> Executing ${currentFile}...`, 'system');
+        
+        try {
+            await pyodideInstance.runPythonAsync(code);
+        } catch(e) {
+            appendToConsole(e.toString(), 'error');
+        }
+        
+        appendToConsole(`✓ Execution finished.`, 'system');
+        btn.disabled = false;
+        btn.innerHTML = '▶ Run';
+    }
+
+    // Mock AI Chat
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if(!text) return;
+        
+        const messages = document.getElementById('chat-messages');
+        
+        // Append user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chat-msg user';
+        userMsg.textContent = text;
+        messages.appendChild(userMsg);
+        
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+        
+        // Mock Bot Response
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'chat-msg bot';
+            botMsg.innerHTML = `<div style="font-weight:800; margin-bottom:4px; font-size:14px;">🤖 Codefy AI</div>Analyzing your code...`;
+            messages.appendChild(botMsg);
+            messages.scrollTop = messages.scrollHeight;
+            
+            setTimeout(() => {
+                botMsg.innerHTML = `<div style="font-weight:800; margin-bottom:4px; font-size:14px;">🤖 Codefy AI</div>That sounds interesting! I can see your current file is <b>${currentFile}</b>. If you need help with syntax, just paste the error code here.`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 1000);
+        }, 500);
+    }
+    
+    function clearChat() {
+        document.getElementById('chat-messages').innerHTML = `
+            <div class="chat-msg bot">
+                <div style="font-weight:800; margin-bottom:4px; font-size:14px;">🤖 Codefy AI</div>
+                Salom 👋 Men Codefy AI yordamchiman. Kod yozishda yordam bera olaman!
+            </div>
+        `;
+    }
+
+    // Boot up
+    initPyodide();
+
+</script>
+{% endblock %}

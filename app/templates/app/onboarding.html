@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codefy | Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #232240; 
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Top Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 30px auto;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #9d72ff; 
+            border-radius: 4px;
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+
+        /* Container for chat layout */
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .mascot-layout {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Mascot */
+        .mascot-wrapper {
+            position: relative;
+            width: 100px;
+            height: 120px;
+            flex-shrink: 0;
+            margin-bottom: -10px;
+        }
+        .mascot-shadow {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+        }
+
+        /* Chat Bubbles */
+        .chat-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .chat-content.wide { max-width: 550px; }
+
+        .bubble {
+            background: #313054;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #fff;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.9);
+            transform-origin: bottom left;
+        }
+
+        .bubble-centered {
+            background: #313054;
+            padding: 14px 24px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            animation: popIn 0.3s ease forwards;
+            display: inline-block;
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Input field group */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            animation: popIn 0.4s ease forwards;
+            opacity: 0;
+            animation-delay: 0.3s;
+        }
+        .name-input {
+            background: transparent;
+            border: 2px solid #4a4970;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            flex-grow: 1;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .name-input:focus { border-color: #9d72ff; }
+
+        /* Buttons */
+        .btn-continue {
+            background: #4A3E7B; 
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-continue:hover { background: #5c4d99; }
+        
+        .btn-sounds-good {
+            align-self: flex-end;
+            background: #6a48d6;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            animation: popIn 0.3s ease forwards;
+            opacity: 0;
+            animation-delay: 1s;
+            transform-origin: bottom right;
+        }
+
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        .option-btn {
+            background: #313054;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 14px 20px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: popIn 0.3s ease forwards;
+            opacity: 0;
+        }
+        .option-btn:hover { background: #3d3b66; }
+        .option-btn.selected { border-color: #9d72ff; background: #3d3b66; }
+        .option-icon { font-size: 20px; width: 24px; text-align: center; }
+
+        /* Avatar group */
+        .avatar-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            animation: popIn 0.3s ease forwards;
+        }
+        .avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #4a4970; border: 2px solid #232240;
+            margin-left: -10px; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .avatar:first-child { margin-left: 0; }
+        .avatar.you { border: 2px dashed #9d72ff; background: transparent; font-size: 12px; font-weight: 700; color: #9d72ff; }
+
+        /* Path Card */
+        .path-card {
+            background: #2D2B52;
+            border: 1px solid #4a4970;
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%;
+            animation: popIn 0.3s ease forwards;
+            opacity: 0;
+            animation-delay: 0.5s;
+        }
+        .path-image {
+            width: 100%; height: 140px;
+            background: #1B1A35;
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid #4a4970;
+        }
+        .path-content { padding: 20px; }
+        .path-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .path-desc { font-size: 14px; color: #a5a4c0; margin-bottom: 16px; line-height: 1.5; }
+        .path-tag { font-size: 12px; font-weight: 700; color: #fff; display: inline-flex; align-items: center; gap: 6px; }
+
+        /* Timeline Box */
+        .timeline-box {
+            background: transparent;
+            border: 1px solid #4a4970;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            animation: popIn 0.3s ease forwards;
+            opacity: 0;
+            animation-delay: 0.3s;
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute; top: 70px; left: 50px; right: 50px;
+            height: 4px; background: #9d72ff;
+            transform: rotate(-10deg);
+        }
+        .timeline-nodes {
+            display: flex; justify-content: space-between; position: relative; z-index: 2;
+            margin-bottom: 30px;
+        }
+        .t-node { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+        .t-icon { width: 44px; height: 44px; background: #232240; border: 3px solid #9d72ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; }
+        .t-text { font-size: 13px; font-weight: 500; max-width: 100px; }
+        .t-dates { display: flex; justify-content: space-between; border-top: 2px solid #4a4970; padding-top: 10px; font-size: 11px; font-weight: 700; color: #a5a4c0; text-transform: uppercase; }
+
+        .step { display: none; width: 100%; }
+        .step.active { display: flex; flex-direction: column; align-items: center; }
+
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="chat-container">
+
+        <!-- STEP 1: Name -->
+        <div class="step active" id="step-1">
+            <div class="mascot-layout">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <rect x="44" y="55" width="12" height="4" rx="2" fill="#00d4ff"/>
+                    </svg>
+                </div>
+                <div class="chat-content">
+                    <div class="bubble">I'm curious. What shall I call you?</div>
+                    <div class="input-group">
+                        <input type="text" id="name-input" class="name-input" placeholder="Type your name" autocomplete="off" value="{{ request.user.username }}">
+                        <button class="btn-continue" id="btn-step-1">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Greeting -->
+        <div class="step" id="step-2">
+            <div class="mascot-layout">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M50 52 L53 55 L50 58 L47 55 Z" fill="#00d4ff"/>
+                    </svg>
+                </div>
+                <div class="chat-content">
+                    <div class="bubble" id="greeting-bubble" style="animation-delay: 0s;">Nice to meet you, name.</div>
+                    <div class="bubble" style="animation-delay: 0.5s;">Let's build a personalized experience based on your background and goals.</div>
+                    <button class="btn-sounds-good" id="btn-step-2">Sounds good</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Occupation -->
+        <div class="step" id="step-3">
+            <div class="mascot-layout" style="align-items: center;">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <path d="M43 55 Q50 60 57 55" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center;">
+                    <div class="bubble-centered">Which of these describes you best?</div>
+                    <div class="options-list">
+                        <button class="option-btn opt-step-3" style="animation-delay: 0.1s;"><span class="option-icon">💼</span> Employed</button>
+                        <button class="option-btn opt-step-3" style="animation-delay: 0.2s;"><span class="option-icon">👨‍💻</span> Self-employed</button>
+                        <button class="option-btn opt-step-3" style="animation-delay: 0.3s;"><span class="option-icon">🎒</span> High school student</button>
+                        <button class="option-btn opt-step-3" style="animation-delay: 0.4s;"><span class="option-icon">🎓</span> University student</button>
+                        <button class="option-btn opt-step-3" style="animation-delay: 0.5s;"><span class="option-icon">❔</span> None of these</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Motivation -->
+        <div class="step" id="step-4">
+            <div class="mascot-layout" style="align-items: center;">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <path d="M46 54 L54 54 M50 50 L50 58" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center;">
+                    <div class="bubble-centered">What motivates you to learn to code?</div>
+                    <div class="options-list">
+                        <button class="option-btn opt-step-4" style="animation-delay: 0.1s;"><span class="option-icon">💻</span> To become a software developer</button>
+                        <button class="option-btn opt-step-4" style="animation-delay: 0.2s;"><span class="option-icon">📱</span> To build my own app</button>
+                        <button class="option-btn opt-step-4" style="animation-delay: 0.3s;"><span class="option-icon">📈</span> To benefit my existing career</button>
+                        <button class="option-btn opt-step-4" style="animation-delay: 0.4s;"><span class="option-icon">🎉</span> Just to have fun</button>
+                        <button class="option-btn opt-step-4" style="animation-delay: 0.5s;"><span class="option-icon">❔</span> None of these</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Fit Right In -->
+        <div class="step" id="step-5">
+            <div class="mascot-layout">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <path d="M46 54 L54 54 M50 50 L50 58" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="chat-content">
+                    <div class="avatar-group" style="animation-delay: 0s;">
+                        <div class="avatar" style="background:#5c4d99"><span style="font-size:20px">💻</span></div>
+                        <div class="avatar" style="background:#ffb067"><span style="font-size:20px">👨</span></div>
+                        <div class="avatar" style="background:#ff7878"><span style="font-size:20px">👩</span></div>
+                        <div class="avatar you">YOU</div>
+                    </div>
+                    <div class="bubble" style="animation-delay: 0.3s;">You'll fit right in!</div>
+                    <div class="bubble" style="animation-delay: 0.8s;">We've already helped thousands of beginners build and eventually publish their own apps.</div>
+                    <button class="btn-sounds-good" id="btn-step-5" style="animation-delay: 1.5s;">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 6: Path Recommendation -->
+        <div class="step" id="step-6">
+            <div class="mascot-layout">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <path d="M46 54 L54 54 M50 50 L50 58" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="chat-content wide">
+                    <div class="bubble" style="animation-delay: 0s;">Based on your goals, I recommend starting with our <b>Full-Stack Developer</b> career path. It teaches the core technologies used to build complete applications from front-end to back-end.</div>
+                    
+                    <div class="path-card">
+                        <div class="path-image">
+                            <!-- Code Icon Illustration -->
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#9d72ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                        </div>
+                        <div class="path-content">
+                            <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">CAREER PATH</div>
+                            <div class="path-title">Full-Stack Developer 
+                                <span class="bg-[#3d3b66] text-[#9d72ff] p-1.5 rounded-lg text-lg">🎓</span>
+                            </div>
+                            <div class="path-desc">Become a full-stack developer: Learn HTML, CSS, JavaScript, and React as well as NodeJS, Express, and SQL</div>
+                            <div class="path-tag">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#58CC02"><rect x="3" y="14" width="4" height="7"/><rect x="10" y="8" width="4" height="13"/><rect x="17" y="2" width="4" height="19"/></svg>
+                                Beginner friendly
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; justify-content: space-between; gap: 10px; margin-top: 10px;">
+                        <button class="btn-sounds-good" style="background: transparent; border: 2px solid #6a48d6; margin-top:0;" id="btn-step-6-other">Discover other options</button>
+                        <button class="btn-sounds-good" style="margin-top:0;" id="btn-step-6">Continue with Full-Stack Developer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 7: Timeline -->
+        <div class="step" id="step-7">
+            <div class="mascot-layout" style="align-items: center;">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M50 52 L53 55 L50 58 L47 55 Z" fill="#00d4ff"/>
+                    </svg>
+                </div>
+                <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center;">
+                    <div class="bubble-centered">You'll be creating programs in no time!</div>
+                    <div class="timeline-box">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-nodes">
+                            <div class="t-node">
+                                <div class="t-icon">▶</div>
+                                <div class="t-text">Start with the basics</div>
+                            </div>
+                            <div class="t-node" style="margin-top:-20px;">
+                                <div class="t-icon" style="border-radius:10px;">1</div>
+                                <div class="t-text">Create your first web project</div>
+                            </div>
+                            <div class="t-node" style="margin-top:-40px;">
+                                <div class="t-icon" style="background:#9d72ff; color:#232240;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                </div>
+                                <div class="t-text">Earn your certificate</div>
+                            </div>
+                        </div>
+                        <div class="t-dates">
+                            <span>NOW</span>
+                            <span>JUL 2026</span>
+                            <span>JUN 2027</span>
+                        </div>
+                    </div>
+                    <button class="btn-sounds-good" id="btn-step-7" style="margin-top:20px; align-self:flex-end;">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 8: Free Trial Offer -->
+        <div class="step" id="step-8">
+            <div class="mascot-layout">
+                <div class="mascot-wrapper">
+                    <div class="mascot-shadow"></div>
+                    <svg viewBox="0 0 100 120" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M50 52 L53 55 L50 58 L47 55 Z" fill="#00d4ff"/>
+                    </svg>
+                </div>
+                <div class="chat-content">
+                    <div class="bubble" style="animation-delay: 0s;">Before you start learning, I have an exciting offer for you. Try the full experience <span style="color:#58CC02">for 7 days FREE!</span></div>
+                    <div class="bubble" style="animation-delay: 0.8s;">But that's not all...<br>You also get a limited time special offer - <span style="color:#58CC02">20% OFF</span></div>
+                    <div class="bubble" style="animation-delay: 1.6s;">Don't miss out! <span style="color:#58CC02">The offer ends in 2 days</span></div>
+                    <button class="btn-sounds-good" id="btn-step-8" style="animation-delay: 2s;">Let me see the offer</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const totalSteps = 8;
+        let userName = "{{ request.user.username }}";
+        const csrfToken = '{{ csrf_token }}';
+
+        function showStep(stepNum) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step-' + stepNum).classList.add('active');
+            document.getElementById('progress-bar').style.width = ((stepNum / totalSteps) * 100) + '%';
+        }
+
+        document.getElementById('btn-step-1').addEventListener('click', () => {
+            const inputVal = document.getElementById('name-input').value.trim();
+            if(inputVal) userName = inputVal;
+            document.getElementById('greeting-bubble').textContent = `Nice to meet you, ${userName}.`;
+            showStep(2);
+        });
+
+        document.getElementById('name-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') document.getElementById('btn-step-1').click();
+        });
+
+        document.getElementById('btn-step-2').addEventListener('click', () => showStep(3));
+        
+        document.querySelectorAll('.opt-step-3').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(() => showStep(4), 300));
+        });
+
+        document.querySelectorAll('.opt-step-4').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(() => showStep(5), 300));
+        });
+
+        document.getElementById('btn-step-5').addEventListener('click', () => showStep(6));
+        
+        document.getElementById('btn-step-6').addEventListener('click', () => showStep(7));
+        document.getElementById('btn-step-6-other').addEventListener('click', () => showStep(7));
+
+        document.getElementById('btn-step-7').addEventListener('click', () => showStep(8));
+
+        document.getElementById('btn-step-8').addEventListener('click', function() {
+            this.textContent = '...';
+            // Complete onboarding
+            fetch("{% url 'onboarding' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(r => r.json()).then(data => {
+                if(data.success) {
+                    // Redirect to pricing paywall like in the screenshot
+                    window.location.href = "{% url 'pricing' %}";
+                }
+            });
+        });
+
+        document.getElementById('progress-bar').style.width = '12.5%';
+    </script>
+</body>
+</html>

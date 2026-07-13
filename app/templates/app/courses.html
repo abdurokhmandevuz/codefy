@@ -1,0 +1,67 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Kurslar | Codefy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-10">
+        <h1 class="text-4xl font-extrabold mb-3">Barcha Kurslar</h1>
+        <p class="text-textSecondary text-lg">O'zingizga mos kursni tanlang va bugunoq boshlang.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in course_data %}
+        {% with c=item.course %}
+        <div class="bg-bgCard border border-borderSubtle rounded-2xl p-6 flex flex-col hover:border-accentYellow/50 transition-colors group">
+            <!-- Icon -->
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-5
+                {% if c.track_type == 'python' %}bg-blue-500/10 border border-blue-500/20
+                {% elif c.track_type == 'javascript' %}bg-yellow-500/10 border border-yellow-500/20
+                {% else %}bg-purple-500/10 border border-purple-500/20{% endif %}">
+                {% if c.track_type == 'python' %}🐍
+                {% elif c.track_type == 'javascript' %}⚡
+                {% else %}🌐{% endif %}
+            </div>
+
+            <h2 class="text-xl font-bold mb-2 group-hover:text-accentYellow transition-colors">{{ c.title }}</h2>
+            <p class="text-textSecondary text-sm mb-4 flex-grow">{{ c.description }}</p>
+
+            <!-- Stats -->
+            <div class="flex items-center gap-4 text-xs text-textSecondary mb-4">
+                <span>📚 {{ item.total }} dars</span>
+                <span>✅ {{ item.completed }} o'tildi</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full h-1.5 bg-bgSecondary rounded-full mb-5 overflow-hidden">
+                <div class="h-full bg-accentYellow rounded-full transition-all duration-500"
+                     style="width: {{ item.pct }}%"></div>
+            </div>
+
+            <!-- CTA -->
+            {% if item.pct == 100 %}
+            <a href="{% url 'certificate' c.id %}"
+               class="block text-center bg-accentGreen text-black font-bold py-3 rounded-xl hover:bg-[#00B571] transition-colors">
+                🏆 Sertifikat olish
+            </a>
+            {% elif item.completed > 0 %}
+            <a href="{% url 'dashboard' %}"
+               class="block text-center bg-accentYellow text-black font-bold py-3 rounded-xl hover:bg-yellow-400 transition-colors">
+                Davom etish ({{ item.pct }}%)
+            </a>
+            {% else %}
+            <a href="{% url 'dashboard' %}"
+               class="block text-center border border-borderSubtle text-white font-bold py-3 rounded-xl hover:border-accentYellow hover:text-accentYellow transition-colors">
+                Boshlash
+            </a>
+            {% endif %}
+        </div>
+        {% endwith %}
+        {% empty %}
+        <div class="col-span-full text-center p-16 bg-bgCard rounded-2xl border border-borderSubtle text-textSecondary">
+            Hozircha kurslar mavjud emas. Admin panel orqali qo'shing.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

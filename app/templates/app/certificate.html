@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sertifikat — {{ course.title }} | Codefy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .cert-wrapper {
+            width: 100%;
+            max-width: 860px;
+        }
+        .cert {
+            background: linear-gradient(135deg, #111 0%, #1a1500 50%, #111 100%);
+            border: 2px solid #FFDE59;
+            border-radius: 24px;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(255,222,89,0.15), inset 0 0 80px rgba(255,222,89,0.03);
+        }
+        .cert::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid rgba(255,222,89,0.2);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+        .corner {
+            position: absolute;
+            width: 40px; height: 40px;
+            border-color: #FFDE59;
+            border-style: solid;
+        }
+        .corner-tl { top: 20px; left: 20px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+        .corner-tr { top: 20px; right: 20px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+        .corner-bl { bottom: 20px; left: 20px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+        .corner-br { bottom: 20px; right: 20px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+        .logo { color: #FFDE59; font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 36px; }
+        .logo span { opacity: 0.5; }
+        .cert-title { font-size: 13px; text-transform: uppercase; letter-spacing: 4px; color: #FFDE59; margin-bottom: 16px; }
+        .cert-heading { font-family: 'Playfair Display', serif; font-size: 48px; color: #fff; margin-bottom: 8px; line-height: 1.1; }
+        .cert-sub { color: #999; font-size: 16px; margin-bottom: 40px; }
+        .cert-name { font-family: 'Playfair Display', serif; font-size: 56px; color: #FFDE59; margin-bottom: 8px; font-weight: 900; }
+        .cert-name-label { color: #666; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; }
+        .cert-course { font-size: 20px; color: #fff; font-weight: 700; background: rgba(255,222,89,0.08); border: 1px solid rgba(255,222,89,0.2); display: inline-block; padding: 10px 24px; border-radius: 8px; margin-bottom: 48px; }
+        .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+        .cert-sig { text-align: center; }
+        .cert-sig-line { width: 140px; height: 1px; background: #444; margin-bottom: 6px; }
+        .cert-sig-name { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .cert-badge { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #FFDE59, #f5a623); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+        .actions { margin-top: 32px; display: flex; gap: 12px; justify-content: center; }
+        .btn { padding: 12px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .btn-primary { background: #FFDE59; color: #000; }
+        .btn-primary:hover { background: #f5cf3d; }
+        .btn-secondary { border: 1px solid #333; color: #aaa; }
+        .btn-secondary:hover { border-color: #FFDE59; color: #FFDE59; }
+        @media print { body { background: white; } .actions { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="cert-wrapper">
+        <div class="cert" id="certificate">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+
+            <div class="logo">Code<span>fy</span></div>
+
+            <div class="cert-title">Muvaffaqiyat Sertifikati</div>
+            <div class="cert-heading">Bu sertifikat</div>
+            <div class="cert-sub">quyidagi shaxsga beriladi:</div>
+
+            <div class="cert-name">{{ user.get_full_name|default:user.username }}</div>
+            <div class="cert-name-label">O'quvchi ismi</div>
+
+            <div>
+                <div style="color:#999; font-size:14px; margin-bottom:8px;">Muvaffaqiyatli tugatgan kursi:</div>
+                <div class="cert-course">{{ course.title }}</div>
+            </div>
+
+            <div class="cert-footer">
+                <div class="cert-sig">
+                    <div class="cert-sig-line"></div>
+                    <div class="cert-sig-name">Codefy Platform</div>
+                </div>
+                <div class="cert-badge">🏆</div>
+                <div class="cert-sig" style="text-align:right;">
+                    <div class="cert-sig-line" style="margin-left:auto;"></div>
+                    <div class="cert-sig-name">{{ completed }} dars tugatildi</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button onclick="window.print()" class="btn btn-primary">🖨️ Chop etish / Saqlash</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Dashboardga qaytish</a>
+        </div>
+    </div>
+</body>
+</html>

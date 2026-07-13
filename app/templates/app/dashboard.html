@@ -1,0 +1,160 @@
+{% extends 'app/base.html' %}
+{% block title %}Dashboard | Codefy{% endblock %}
+{% block nav_learn %}active{% endblock %}
+
+{% block content %}
+<style>
+    /* Specific overrides to match the clean Sololearn aesthetic */
+    body {
+        background-color: #F4F7F8;
+    }
+    
+    /* Remove base.html content padding if any, we'll handle it here */
+    .lesson-card {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .lesson-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .lesson-card:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Chevron rotation */
+    .module-header[aria-expanded="true"] .chevron {
+        transform: rotate(180deg);
+    }
+</style>
+
+<div class="min-h-screen pb-24 pt-8">
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <!-- Course Header Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-[26px] font-extrabold text-gray-900 tracking-tight">{{ course.title|default:"Kursingiz" }}</h1>
+                <button class="w-10 h-10 rounded-full hover:bg-gray-50 flex items-center justify-center transition-colors">
+                    <i data-lucide="chevron-up" class="w-6 h-6 text-gray-500"></i>
+                </button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-100 rounded-full h-[6px] overflow-hidden">
+                <div class="bg-[#58CC02] h-full rounded-full transition-all duration-700 ease-out" style="width: {{ overall_percent }}%"></div>
+            </div>
+        </div>
+
+        <!-- Modules List -->
+        <div class="space-y-10">
+            {% if not modules_data %}
+            <div class="text-center py-12">
+                <h2 class="text-xl font-bold text-gray-700">Hali hech qanday dars mavjud emas</h2>
+            </div>
+            {% endif %}
+
+            {% for mod_data in modules_data %}
+            <div class="module-section">
+                <!-- Module Header -->
+                <button class="module-header w-full flex items-center justify-between py-2 mb-4 group" aria-expanded="true">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-md bg-[#1CB0F6] flex items-center justify-center text-white shadow-sm">
+                            <i data-lucide="play" class="w-4 h-4 fill-current ml-0.5"></i>
+                        </div>
+                        <h2 class="text-xl font-extrabold text-gray-900 group-hover:text-[#1CB0F6] transition-colors">{{ mod_data.module.title }}</h2>
+                    </div>
+                    <i data-lucide="chevron-up" class="chevron w-6 h-6 text-gray-400 transition-transform duration-300"></i>
+                </button>
+
+                <!-- Lessons Stack -->
+                <div class="space-y-3">
+                    {% for item in mod_data.lessons %}
+                    
+                    {% if item.done or item.is_next %}
+                    <a href="{% url 'lesson' item.lesson.id %}" class="lesson-card block bg-white rounded-[16px] p-5 shadow-sm border border-gray-100 relative group">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-5">
+                                <!-- Icon based on type -->
+                                {% if item.lesson.is_practice %}
+                                <div class="text-[#CE82FF] opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="help-circle" class="w-8 h-8 fill-current text-white stroke-[#CE82FF] stroke-[1.5]"></i>
+                                </div>
+                                {% else %}
+                                <div class="text-[#1CB0F6] opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="file-text" class="w-8 h-8 fill-current text-white stroke-[#1CB0F6] stroke-[1.5]"></i>
+                                </div>
+                                {% endif %}
+
+                                <!-- Text -->
+                                <div>
+                                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                                        {% if item.lesson.is_practice %}Amaliyot{% else %}Dars{% endif %}
+                                    </p>
+                                    <h3 class="text-[17px] font-bold text-[#1E2749]">{{ item.lesson.title }}</h3>
+                                    
+                                    <!-- XP Badge -->
+                                    <div class="mt-2 inline-flex items-center rounded-full border border-gray-200 px-2 py-0.5 text-[11px] font-bold text-gray-400 bg-white shadow-sm">
+                                        XP +{% if item.lesson.is_practice %}20{% else %}10{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Status -->
+                            <div class="pl-4">
+                                {% if item.done %}
+                                <i data-lucide="check" class="w-7 h-7 text-[#58CC02] stroke-[3]"></i>
+                                {% elif item.is_next %}
+                                <div class="w-3.5 h-3.5 rounded-full bg-[#1CB0F6] shadow-[0_0_0_4px_rgba(28,176,246,0.2)] animate-pulse"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Active Lesson Indicator Strip -->
+                        {% if item.is_next %}
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-[#1CB0F6] rounded-r-md"></div>
+                        {% endif %}
+                    </a>
+                    
+                    {% else %}
+                    <!-- Locked Lesson -->
+                    <div class="block bg-white/50 rounded-[16px] p-5 border border-gray-100 opacity-60 cursor-not-allowed">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-5">
+                                <div class="text-gray-300">
+                                    <i data-lucide="lock" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                                        {% if item.lesson.is_practice %}Amaliyot{% else %}Dars{% endif %}
+                                    </p>
+                                    <h3 class="text-[17px] font-bold text-gray-500">{{ item.lesson.title }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple script to toggle module accordions
+    document.querySelectorAll('.module-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const isExpanded = header.getAttribute('aria-expanded') === 'true';
+            header.setAttribute('aria-expanded', !isExpanded);
+            const content = header.nextElementSibling;
+            if (isExpanded) {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

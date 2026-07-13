@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codefy - Video Kurslar (Premium)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgPrimary: '#000000',
+                        bgSecondary: '#000000',
+                        bgCard: '#0D0D0D',
+                        bgLight: '#FFFFFF',
+                        textPrimary: '#FFFFFF',
+                        textSecondary: '#C4C4C4',
+                        accentYellow: '#FFDE59',
+                        accentYellowHover: '#F5CF3D',
+                        borderYellow: '#FFDE59',
+                        accentGreen: '#00D484',
+                        borderSubtle: '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            background-color: theme('colors.bgPrimary');
+            color: theme('colors.textPrimary');
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col relative bg-bgPrimary text-textPrimary">
+    <!-- Navbar -->
+    <nav class="bg-bgSecondary border-b border-borderSubtle">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-8">
+                    <a href="{% url 'index' %}" class="text-2xl font-bold tracking-tight"><span class="text-white">Code</span><span class="text-accentYellow">fy</span></a>
+                    <div class="hidden md:block">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="{% url 'index' %}#courses" class="text-textSecondary hover:text-textPrimary px-3 py-2 rounded-md text-sm font-medium transition-colors">Kurslar</a>
+                            <a href="{% url 'game_select' %}" class="text-textSecondary hover:text-textPrimary px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1">
+                                O'yin <span class="bg-accentYellow text-black/20 text-accentYellow text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">Yoshlar</span>
+                            </a>
+                            <a href="{% url 'pricing' %}" class="text-textSecondary hover:text-textPrimary px-3 py-2 rounded-md text-sm font-medium transition-colors">Narxlar</a>
+                            <a href="{% url 'premium' %}" class="text-textPrimary px-3 py-2 border-b-2 border-borderYellow text-sm font-medium flex items-center gap-1">
+                                <i data-lucide="crown" class="w-4 h-4 text-accentYellow"></i> Premium
+                            </a>
+                            <a href="javascript:window.showToast('Tez kunda', 'info')" class="text-textSecondary hover:text-textPrimary px-3 py-2 rounded-md text-sm font-medium transition-colors">Hamjamiyat</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex items-center gap-4">
+                        <a href="{% url 'register' %}" class="text-white hover:text-textSecondary font-bold text-sm transition-colors">Kirish</a>
+                        <a href="{% url 'register' %}" class="bg-accentYellow text-black font-bold px-4 py-2 rounded-md hover:bg-accentYellowHover transition-colors">Ro'yxatdan o'tish</a>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-textSecondary hover:text-textPrimary">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-8">
+            <a href="javascript:history.back()" class="w-10 h-10 rounded-lg bg-bgCard border border-borderYellow flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-bgSecondary transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <h1 class="text-3xl font-bold flex items-center gap-3">
+                <i data-lucide="crown" class="w-8 h-8 text-accentYellow"></i> Video Kurslar (Premium)
+            </h1>
+        </div>
+
+        <div class="bg-bgCard/50 border border-borderSubtle rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold mb-4">Nega ba'zi darslar pullik?</h3>
+            <p class="text-textSecondary leading-relaxed">
+                <strong>Bepul qismda</strong> siz dasturlashning asosiy mantiqi va ko'nikmalarini o'yin orqali o'rganasiz — bu <em>hech qachon pullik bo'lmaydi!</em><br/><br/>
+                <strong>Video kurslar</strong> esa haqiqiy ustozlar tomonidan yozilgan maxsus darslardir. Ular chuqurroq mavzularni (o'yin yaratish, veb-sayt tuzish) o'z ichiga oladi va ko'proq resurs talab qiladi. Ushbu kurslar tez orada Codefy Pro obunasi doirasida ochiq bo'ladi.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Course 1 -->
+            <div class="bg-bgCard border border-borderYellow rounded-2xl p-6 cursor-pointer hover:border-borderYellow hover:-translate-y-1 transition-all group relative overflow-hidden" onclick="openModal('Python bilan o'z o'yiningni yarat')">
+                <div class="absolute top-4 right-4 bg-bgSecondary border border-borderSubtle px-3 py-1 rounded-full text-xs font-bold text-textSecondary uppercase tracking-wider">Tez Orada</div>
+                <div class="w-16 h-16 rounded-2xl bg-accentYellow text-black/20 text-accentYellow flex items-center justify-center mb-6">
+                    <i data-lucide="gamepad-2" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Python bilan o'z o'yiningni yarat</h3>
+                <p class="text-textSecondary mb-6 line-clamp-2">Pygame kutubxonasi yordamida haqiqiy kompyuter o'yinlarini noldan yasashni o'rganamiz. Matematika va mantiq amaliyotda!</p>
+                <div class="flex items-center gap-6 text-sm text-textSecondary border-t border-borderSubtle pt-4">
+                    <span class="flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> 15 video</span>
+                    <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 4 soat</span>
+                </div>
+            </div>
+
+            <!-- Course 2 -->
+            <div class="bg-bgCard border border-borderYellow rounded-2xl p-6 cursor-pointer hover:border-borderYellow hover:-translate-y-1 transition-all group relative overflow-hidden" onclick="openModal('Veb-sayt qanday ishlaydi?')">
+                <div class="absolute top-4 right-4 bg-bgSecondary border border-borderSubtle px-3 py-1 rounded-full text-xs font-bold text-textSecondary uppercase tracking-wider">Tez Orada</div>
+                <div class="w-16 h-16 rounded-2xl bg-accentGreen/20 text-accentGreen flex items-center justify-center mb-6">
+                    <i data-lucide="globe" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Veb-sayt qanday ishlaydi?</h3>
+                <p class="text-textSecondary mb-6 line-clamp-2">HTML, CSS va JavaScript asoslarida o'zingizning shaxsiy portfoliyo veb-saytingizni yaratasiz va uni internetga joylaysiz.</p>
+                <div class="flex items-center gap-6 text-sm text-textSecondary border-t border-borderSubtle pt-4">
+                    <span class="flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> 20 video</span>
+                    <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 5 soat</span>
+                </div>
+            </div>
+
+            <!-- Course 3 -->
+            <div class="bg-bgCard border border-borderYellow rounded-2xl p-6 cursor-pointer hover:border-borderYellow hover:-translate-y-1 transition-all group relative overflow-hidden" onclick="openModal('Scratch'dan haqiqiy kodgacha')">
+                <div class="absolute top-4 right-4 bg-bgSecondary border border-borderSubtle px-3 py-1 rounded-full text-xs font-bold text-textSecondary uppercase tracking-wider">Tez Orada</div>
+                <div class="w-16 h-16 rounded-2xl bg-accentYellow/20 text-accentYellow flex items-center justify-center mb-6">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Scratch'dan haqiqiy kodgacha</h3>
+                <p class="text-textSecondary mb-6 line-clamp-2">Blokli dasturlashdan haqiqiy matnli kodlashga silliq o'tish uchun maxsus tayyorlangan intensiv kurs.</p>
+                <div class="flex items-center gap-6 text-sm text-textSecondary border-t border-borderSubtle pt-4">
+                    <span class="flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> 10 video</span>
+                    <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 2.5 soat</span>
+                </div>
+            </div>
+
+            <!-- Course 4 -->
+            <div class="bg-bgCard border border-borderYellow rounded-2xl p-6 cursor-pointer hover:border-borderYellow hover:-translate-y-1 transition-all group relative overflow-hidden" onclick="openModal('Robototexnika asoslari (Arduino)')">
+                <div class="absolute top-4 right-4 bg-bgSecondary border border-borderSubtle px-3 py-1 rounded-full text-xs font-bold text-textSecondary uppercase tracking-wider">Tez Orada</div>
+                <div class="w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-500 flex items-center justify-center mb-6">
+                    <i data-lucide="bot" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Robototexnika asoslari (Arduino)</h3>
+                <p class="text-textSecondary mb-6 line-clamp-2">Haqiqiy jismlarni kod bilan boshqarish. Arduino mikro-kontrollerida chiroqlar, motorlar va sensorlar bilan ishlash.</p>
+                <div class="flex items-center gap-6 text-sm text-textSecondary border-t border-borderSubtle pt-4">
+                    <span class="flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> 12 video</span>
+                    <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> 3 soat</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notify Modal -->
+    <div id="notifyModal" class="fixed inset-0 bg-bgPrimary/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-bgCard border border-borderYellow rounded-2xl p-8 max-w-md w-full relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-textSecondary hover:text-textPrimary transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="w-16 h-16 bg-accentYellow text-black/20 text-accentYellow rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="bell" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-center mb-2">Xabardor bo'ling!</h2>
+            <p class="text-textSecondary text-center mb-6">"<span id="modalCourseTitle" class="text-textPrimary font-medium"></span>" kursi tez orada platformaga qo'shiladi. Qulay imkoniyatni o'tkazib yubormaslik uchun aloqa ma'lumotlaringizni qoldiring.</p>
+            
+            <form id="notifyForm" class="space-y-4" onsubmit="submitForm(event)">
+                <div>
+                    <label class="block text-sm font-medium text-textSecondary mb-2">Email yoki Telefon raqam</label>
+                    <input type="text" placeholder="ali@gmail.com" class="w-full bg-bgSecondary border border-borderSubtle rounded-lg px-4 py-3 focus:outline-none focus:border-borderYellow transition-colors text-textPrimary" required>
+                </div>
+                <button type="submit" class="w-full bg-accentYellow text-black hover:bg-accentYellowHover  font-bold py-3 px-4 rounded-lg transition-colors">Yuborish</button>
+            </form>
+
+            <div id="successMsg" class="hidden text-center text-accentGreen font-medium py-4">
+                <i data-lucide="check-circle" class="w-12 h-12 mx-auto mb-2"></i>
+                Ajoyib! Kurs chiqqanda sizga xabar beramiz.
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-bgSecondary border-t border-borderSubtle py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'index' %}" class="text-xl font-bold tracking-tight"><span class="text-white">Code</span><span class="text-accentYellow">fy</span></a>
+                <span class="text-textSecondary text-sm">&copy; 2026. Barcha huquqlar himoyalangan.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const modal = document.getElementById('notifyModal');
+        const form = document.getElementById('notifyForm');
+        const successMsg = document.getElementById('successMsg');
+        const titleEl = document.getElementById('modalCourseTitle');
+
+        function openModal(courseTitle) {
+            titleEl.textContent = courseTitle;
+            form.classList.remove('hidden');
+            successMsg.classList.add('hidden');
+            form.reset();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            form.classList.add('hidden');
+            successMsg.classList.remove('hidden');
+            setTimeout(() => {
+                closeModal();
+            }, 3000);
+        }
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+    <script src="{% static 'js/utils.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{% extends 'app/base.html' %}
+{% block title %}Lesson | Codefy{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col h-screen bg-bgPrimary absolute top-0 left-0 right-0 z-50">
+    <div class="h-[60px] flex items-center px-4 sm:px-6 gap-4 sm:gap-6 bg-white border-b-2 border-borderLight shrink-0 w-full">
+        <button class="text-textSecondary hover:text-textPrimary text-xl font-bold transition-colors bg-transparent border-none cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">✕</button>
+        <div class="flex-grow flex gap-1 h-1.5">
+            <div class="flex-grow bg-accentPurple rounded-full"></div>
+            <div class="flex-grow bg-borderLight rounded-full transition-colors duration-300" id="seg-2"></div>
+            <div class="flex-grow bg-borderLight rounded-full"></div>
+            <div class="flex-grow bg-borderLight rounded-full"></div>
+            <div class="flex-grow bg-borderLight rounded-full"></div>
+        </div>
+        <button class="bg-accentYellow text-textPrimary px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-black cursor-pointer border-none" onclick="window.location.href='{% url 'pricing' %}'">Premium</button>
+    </div>
+    
+    <div class="flex-grow flex flex-col items-center justify-center p-4 sm:p-10 text-center relative overflow-y-auto">
+        
+        <!-- State 1 -->
+        <div id="state-intro" class="flex flex-col items-center max-w-[500px] w-full">
+            <div class="mb-6 sm:mb-8">
+                <svg width="200" height="150" viewBox="0 0 200 150">
+                    <!-- Monitor left -->
+                    <rect x="20" y="50" width="40" height="50" rx="4" fill="#69688c"/>
+                    <rect x="25" y="55" width="30" height="40" rx="2" fill="#252347"/>
+                    <!-- Monitor right -->
+                    <rect x="140" y="40" width="50" height="70" rx="4" fill="#69688c"/>
+                    <rect x="145" y="45" width="40" height="60" rx="2" fill="#252347"/>
+                    
+                    <!-- Center Robot -->
+                    <rect x="60" y="30" width="80" height="70" rx="20" fill="#e8e8f0"/>
+                    <rect x="70" y="40" width="60" height="40" rx="10" fill="#0b0b1a"/>
+                    <path d="M80 55 Q83 50 86 55" stroke="#00d4ff" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M114 55 Q117 50 120 55" stroke="#00d4ff" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M92 65 L108 65 M97 60 L97 70" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M140 30 L150 20 M140 20 L150 30" stroke="#FFC800" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black mb-4 text-textPrimary">{{ lesson.title }}</h2>
+            <div class="text-[14px] sm:text-[15px] font-semibold text-textSecondary leading-relaxed text-left w-full bg-white p-5 sm:p-6 rounded-2xl border-2 border-borderLight shadow-sm">
+                {{ lesson.content|safe|default:"Bu darsda hali nazariy ma'lumot kiritilmagan." }}
+            </div>
+        </div>
+        
+        <!-- State 2 -->
+        <div id="state-interaction" class="hidden flex-col items-center max-w-[600px] w-full">
+            {% if lesson.initial_code %}
+            <div class="text-[15px] sm:text-[16px] font-bold leading-relaxed mb-6 text-textPrimary">
+                O'rganganlaringizni sinab ko'ramiz! Dastur kodini to'ldiring:
+            </div>
+            
+            <div class="bg-white border-2 border-borderLight rounded-2xl w-full max-w-[500px] overflow-hidden shadow-sm text-left">
+                <div class="bg-bgPrimary border-b-2 border-borderLight px-4 py-2 flex justify-between items-center text-xs font-black text-textSecondary">
+                    <span>Kod Muharriri</span>
+                </div>
+                <div class="p-4 sm:p-5 flex flex-col items-center">
+                    <textarea id="code-editor" class="w-full h-[150px] bg-[#1E2749] text-white border-2 border-transparent rounded-xl p-3 font-mono text-[14px] sm:text-[15px] outline-none focus:border-accentPurple transition-colors resize-none">{{ lesson.initial_code }}</textarea>
+                    <div class="mt-4 flex w-full">
+                        <button class="btn-3d btn-purple py-2 px-6 w-auto" onclick="checkCode()">Tekshirish</button>
+                    </div>
+                    <div id="code-feedback" class="mt-4 font-bold text-sm min-h-[20px] w-full text-left"></div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-[15px] sm:text-[16px] font-bold leading-relaxed mb-6 text-textPrimary">
+                Ajoyib! Nazariy qismni muvaffaqiyatli yakunladingiz. <br><br>
+                Darsni yakunlash uchun pastdagi "Davom etish" tugmasini bosing.
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+    
+    <div class="h-[80px] border-t-2 border-borderLight flex justify-between items-center px-4 sm:px-6 bg-white shrink-0 w-full">
+        <div class="hidden sm:block">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+                <rect x="25" y="30" width="50" height="40" rx="15" fill="#e8e8f0"/>
+                <rect x="35" y="40" width="30" height="20" rx="5" fill="#0b0b1a"/>
+                <path d="M40 50 Q42 47 44 50" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M56 50 Q58 47 60 50" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M46 55 L54 55" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <button class="btn-3d btn-purple ml-auto" onclick="nextState()">
+            Davom etish <span class="hidden sm:inline text-[11px] font-semibold opacity-70 ml-2">Ctrl+↵</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    let state = 1;
+    let codePassed = false;
+    let hasCodeInteraction = {% if lesson.initial_code %}true{% else %}false{% endif %};
+
+    function nextState() {
+        if (state === 1) {
+            document.getElementById('state-intro').style.display = 'none';
+            document.getElementById('state-interaction').classList.remove('hidden');
+            document.getElementById('state-interaction').classList.add('flex');
+            document.getElementById('seg-2').classList.remove('bg-borderLight');
+            document.getElementById('seg-2').classList.add('bg-accentPurple');
+            state = 2;
+            
+            // If there's no code interaction, they can pass immediately by clicking continue again
+            if (!hasCodeInteraction) {
+                codePassed = true;
+            }
+        } else if (state === 2) {
+            if (codePassed) {
+                completeLesson();
+            } else {
+                alert("Iltimos, avval kodni to'g'ri yozib tekshiring!");
+            }
+        }
+    }
+
+    function checkCode() {
+        const userCode = document.getElementById('code-editor').value.toLowerCase().replace(/\s+/g, ' ').trim();
+        const expected = "{{ lesson.expected_output|escapejs }}".toLowerCase().replace(/\s+/g, ' ').trim();
+        const feedback = document.getElementById('code-feedback');
+        
+        // Simple code check: does the code contain the expected output or keyword?
+        // Stripped spaces and lowercase to be very forgiving.
+        if (expected && userCode.includes(expected)) {
+            feedback.style.color = "#58CC02";
+            feedback.innerText = "To'g'ri! 'Davom etish' tugmasini bosing.";
+            codePassed = true;
+        } else {
+            feedback.style.color = "#FF4B4B";
+            feedback.innerText = "Xato. Qaytadan urinib ko'ring! Kutilmoqda: " + "{{ lesson.expected_output|escapejs }}";
+        }
+    }
+    
+    function completeLesson() {
+        fetch('{% url "lesson_complete" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ lesson_id: {{ lesson.id }} })
+        }).then(() => {
+            window.location.href = '{% url "dashboard" %}';
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'Enter') {
+            nextState();
+        }
+    });
+</script>
+{% endblock %}

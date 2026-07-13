@@ -1,0 +1,143 @@
+{% extends 'app/base.html' %}
+{% block title %}Library | Codefy{% endblock %}
+
+{% block content %}
+<style>
+    body { background-color: #1F1E3C !important; color: #FFFFFF !important; }
+    
+    .library-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+    
+    .lib-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    
+    .lib-title {
+        font-size: 24px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .lib-subtitle {
+        font-size: 14px;
+        color: #a5a4c0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+    
+    .path-card {
+        background: #2D2B52;
+        border: 1px solid #4a4970;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.2s;
+    }
+    .path-card:hover { transform: translateY(-4px); border-color: #7C4DFF; }
+    
+    .path-img {
+        width: 100%;
+        height: 160px;
+        background: #1B1A35;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #4a4970;
+    }
+    
+    .path-content { padding: 20px; }
+    
+    .path-label {
+        font-size: 10px; font-weight: 800;
+        color: #a5a4c0; text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+    
+    .path-title {
+        font-size: 18px; font-weight: 800;
+        margin-bottom: 8px;
+        display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    
+    .path-desc {
+        font-size: 13px; color: #a5a4c0;
+        line-height: 1.5; margin-bottom: 16px;
+        min-height: 40px;
+    }
+    
+    .path-tag {
+        font-size: 12px; font-weight: 700; color: #fff;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    
+    @media (max-width: 900px) {
+        .cards-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+        .cards-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="library-container">
+    <div class="lib-header">
+        <div class="lib-title">Career Paths <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5a4c0" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></div>
+        <div class="lib-subtitle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            Earn a professional certificate
+        </div>
+    </div>
+    
+    <div class="cards-grid">
+        
+        {% for path in paths %}
+        <div class="path-card">
+            <div class="path-img">
+                {% if path.svg_code %}
+                    {{ path.svg_code|safe }}
+                {% else %}
+                    <!-- fallback image if no svg -->
+                    <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+                        <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+                        <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+                        <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+                        <path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/>
+                        <path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/>
+                        <rect x="44" y="55" width="12" height="4" rx="2" fill="#00d4ff"/>
+                    </svg>
+                {% endif %}
+            </div>
+            <div class="path-content">
+                <div class="path-label">CAREER PATH</div>
+                <div class="path-title">{{ path.title }} <span class="bg-[#3d3b66] text-[#9d72ff] p-1 rounded-lg text-sm">{{ path.icon_emoji }}</span></div>
+                <div class="path-desc">{{ path.description }}</div>
+                {% if path.is_beginner_friendly %}
+                <div class="path-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#58CC02"><rect x="3" y="14" width="4" height="7"/><rect x="10" y="8" width="4" height="13"/><rect x="17" y="2" width="4" height="19"/></svg>
+                    Beginner friendly
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-[#a5a4c0] col-span-3 text-center py-10">No career paths available yet.</div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock %}

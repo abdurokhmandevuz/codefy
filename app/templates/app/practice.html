@@ -1,0 +1,54 @@
+{% extends 'app/base.html' %}
+{% block title %}Practice | Codefy{% endblock %}
+
+{% block content %}
+<!-- Top Tab Switcher -->
+<div style="display:flex; justify-content:center; padding-top: 20px; border-bottom: 2px solid #E8E8F0; padding-bottom: 12px; background: #fff;">
+    <a href="{% url 'practice' %}" style="flex:1; text-align:center; color:#7C4DFF; font-weight:800; font-size:16px; text-decoration:none; padding-bottom:12px; border-bottom:3px solid #7C4DFF; margin-bottom:-14px;">Amaliyot</a>
+    <a href="{% url 'community_list' %}" style="flex:1; text-align:center; color:#6B6F8D; font-weight:700; font-size:16px; text-decoration:none; padding-bottom:12px; margin-bottom:-14px;">Hamjamiyat</a>
+</div>
+<div class="max-w-[600px] mx-auto px-5 py-12 text-center pb-24">
+    
+    <div class="mb-6 relative inline-block">
+        <div class="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-[60px] h-[10px] bg-black/10 rounded-full"></div>
+        <svg width="120" height="120" viewBox="0 0 100 120" fill="none">
+            <!-- Dumbells -->
+            <path d="M5 80 L35 80" stroke="#7C4DFF" stroke-width="6" stroke-linecap="round"/>
+            <rect x="5" y="70" width="8" height="20" rx="2" fill="#7C4DFF"/>
+            <rect x="27" y="70" width="8" height="20" rx="2" fill="#7C4DFF"/>
+            
+            <rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+            <rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/>
+            <rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/>
+            <rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/>
+            <path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+            <path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+            <path d="M46 54 L54 54 M50 50 L50 58" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+            
+            <!-- Headband -->
+            <path d="M15 35 Q50 30 85 35 L82 25 Q50 20 18 25 Z" fill="#58CC02"/>
+        </svg>
+    </div>
+    
+    <h1 class="text-3xl font-black mb-3 text-gray-900">Amaliyot</h1>
+    <p class="text-[15px] text-gray-500 leading-relaxed mb-8">Amaliy mashqlar va loyihalar orqali bilimingizni oshiring.<br>Mashqlarni ochish uchun darslarni yakunlang.</p>
+    
+    <button class="bg-[#7C4DFF] text-white border-none rounded-xl py-3.5 px-7 font-extrabold text-[16px] cursor-pointer shadow-[0_4px_0_#6b3fe0] mb-10 inline-block active:translate-y-1 active:shadow-none transition-all" onclick="window.location.href='{% url 'dashboard' %}'">Darslarni davom ettirish</button>
+    
+    <div class="bg-white border-2 border-gray-100 rounded-2xl text-left overflow-hidden">
+        {% for card in cards %}
+        <div class="p-6 border-b-2 border-gray-100 flex gap-4 last:border-b-0">
+            <div class="text-2xl">{{ card.icon_emoji }}</div>
+            <div>
+                <div class="text-[15px] font-extrabold text-gray-900 mb-2">{{ card.title }}</div>
+                <div class="text-[13px] text-gray-500 leading-relaxed">{{ card.description }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-6 text-gray-400 text-center block">
+            Hozircha mashqlar yo'q.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

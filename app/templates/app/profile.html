@@ -1,0 +1,82 @@
+{% extends 'app/base.html' %}
+{% block title %}Profil | Codefy{% endblock %}
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-6">
+
+    <!-- Avatar & Name -->
+    <div class="flex flex-col items-center mb-6">
+        <div class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black text-white mb-3 shadow-card-md"
+             style="background: linear-gradient(135deg, #7C4DFF, #3B9EFF)">
+            {{ user.username|make_list|first|upper }}
+        </div>
+        <h1 class="text-2xl font-black text-textPrimary">{{ user.username }}</h1>
+        <button class="text-sm text-accentPurple font-semibold mt-1">+ Bio qo'shish</button>
+    </div>
+
+    <!-- Upgrade to Pro -->
+    {% if not progress.is_pro %}
+    <a href="{% url 'pricing' %}"
+        class="btn-3d btn-purple flex items-center justify-center gap-2 w-full text-base py-4 mb-6">
+        👑 Pro ga o'tish
+    </a>
+    {% else %}
+    <div class="flex items-center justify-center gap-2 w-full bg-accentPurple/10 border border-accentPurple/20 rounded-2xl py-4 mb-6">
+        <span class="text-accentPurple font-black">👑 PRO a'zo</span>
+    </div>
+    {% endif %}
+
+    <!-- Stats cards -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card p-4 text-center">
+            <div class="text-2xl font-black text-orange-500 mb-1">🔥 {{ progress.streak }}</div>
+            <div class="text-xs font-bold text-textSecondary">Kun ketma-ket</div>
+        </div>
+        <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card p-4 text-center">
+            <div class="text-2xl font-black text-accentYellow mb-1">⚡ {{ progress.xp }}</div>
+            <div class="text-xs font-bold text-textSecondary">Jami XP</div>
+        </div>
+        <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card p-4 text-center">
+            <div class="text-2xl font-black text-textPrimary mb-1">🥉</div>
+            <div class="text-xs font-bold text-textSecondary">Bronza Liga</div>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card p-5 mb-4">
+        <div class="font-black text-textPrimary mb-4">🏅 Nishonlar</div>
+        {% if badges %}
+        <div class="grid grid-cols-3 gap-3">
+            {% for badge in badges %}
+            <div class="flex flex-col items-center gap-2 p-3 bg-bgPrimary rounded-xl border border-borderLight">
+                <div class="w-12 h-12 rounded-full bg-accentPurple/10 border-2 border-accentPurple/20 flex items-center justify-center text-xl">
+                    {% if badge.icon == 'footprints' %}👣
+                    {% elif badge.icon == 'crown' %}👑
+                    {% elif badge.icon == 'bug' %}🐛
+                    {% else %}🏅{% endif %}
+                </div>
+                <div class="text-center">
+                    <div class="text-xs font-bold text-textPrimary leading-tight">{{ badge.name }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-6 text-textSecondary">
+            <div class="text-3xl mb-2">🔒</div>
+            <div class="text-sm font-semibold">Darslarni tugatib nishon oling!</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Settings link -->
+    <a href="{% url 'settings' %}" class="btn-outline flex items-center justify-center gap-2 w-full py-3 mb-3">
+        ⚙️ Sozlamalar
+    </a>
+    <a href="{% url 'logout' %}" class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border-2 border-red-100 text-red-400 font-bold text-sm hover:bg-red-50 transition-colors">
+        Tizimdan chiqish
+    </a>
+
+</div>
+{% endblock %}

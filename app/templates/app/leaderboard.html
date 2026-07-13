@@ -1,0 +1,81 @@
+{% extends 'app/base.html' %}
+{% block title %}Reyting | Codefy{% endblock %}
+{% block nav_leaderboard %}active{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-6">
+
+    <!-- Liga header -->
+    <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card p-5 mb-6 text-center">
+        <div class="text-4xl mb-2">🥇</div>
+        <div class="font-black text-xl text-textPrimary mb-0.5">Bronza Liga</div>
+        <div class="text-sm text-textSecondary">Eng yaxshi 10 ta foydalanuvchi keyingi ligaga o'tadi!</div>
+
+        <!-- Liga bosqichlari -->
+        <div class="flex justify-center gap-2 mt-4">
+            <div class="flex flex-col items-center gap-1">
+                <div class="w-9 h-9 rounded-full bg-amber-700/20 border-2 border-amber-600 flex items-center justify-center text-base">🥉</div>
+                <div class="text-[10px] text-amber-700 font-bold">Bronza</div>
+            </div>
+            <div class="w-8 flex items-center"><div class="h-0.5 w-full bg-borderLight"></div></div>
+            <div class="flex flex-col items-center gap-1 opacity-40">
+                <div class="w-9 h-9 rounded-full bg-gray-100 border-2 border-gray-300 flex items-center justify-center text-base">🥈</div>
+                <div class="text-[10px] text-textSecondary font-bold">Kumush</div>
+            </div>
+            <div class="w-8 flex items-center"><div class="h-0.5 w-full bg-borderLight"></div></div>
+            <div class="flex flex-col items-center gap-1 opacity-40">
+                <div class="w-9 h-9 rounded-full bg-gray-100 border-2 border-gray-300 flex items-center justify-center text-base">🥇</div>
+                <div class="text-[10px] text-textSecondary font-bold">Oltin</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard list -->
+    <div class="bg-bgCard rounded-2xl border border-borderLight shadow-card overflow-hidden">
+        {% for u in top_users %}
+        <div class="flex items-center gap-4 px-5 py-4 border-b border-borderLight last:border-0
+            {% if u.user == request.user %}bg-accentGreen/8{% endif %}">
+
+            <!-- Rank -->
+            <div class="w-8 text-center font-black text-lg">
+                {% if forloop.counter == 1 %}🥇
+                {% elif forloop.counter == 2 %}🥈
+                {% elif forloop.counter == 3 %}🥉
+                {% else %}<span class="text-textSecondary text-base">{{ forloop.counter }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Avatar -->
+            <div class="w-11 h-11 rounded-full flex items-center justify-center font-black text-lg text-white uppercase shrink-0"
+                 style="background: {% cycle '#7C4DFF' '#58CC02' '#FFC800' '#3B9EFF' '#FF4B4B' '#FF9B43' '#00B5D8' '#E056A0' %}">
+                {{ u.user.username|make_list|first }}
+            </div>
+
+            <!-- Name -->
+            <div class="flex-grow min-w-0">
+                <div class="font-bold text-textPrimary truncate">
+                    {{ u.user.username }}
+                    {% if u.user == request.user %}<span class="text-xs text-accentGreen ml-1">(Siz)</span>{% endif %}
+                </div>
+                <div class="text-xs text-textSecondary flex items-center gap-1.5">
+                    {% if u.is_pro %}<span class="text-accentPurple font-bold">PRO</span>{% endif %}
+                    🔥 {{ u.streak }} kun
+                </div>
+            </div>
+
+            <!-- XP -->
+            <div class="text-right shrink-0">
+                <div class="font-black text-textPrimary">{{ u.xp }}</div>
+                <div class="text-xs text-textSecondary">⚡ XP</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-12 text-center text-textSecondary">
+            <div class="text-4xl mb-3">🏆</div>
+            <div class="font-bold">Hali reyting yo'q. Birinchi bo'ling!</div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

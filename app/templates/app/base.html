@@ -1,0 +1,304 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Codefy{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgPrimary:   '#F7F7FB',
+                        bgCard:      '#FFFFFF',
+                        textPrimary: '#1E2749',
+                        textSecondary:'#6B6F8D',
+                        accentPurple:'#7C4DFF',
+                        accentPurpleDark:'#5B2EC7',
+                        accentGreen: '#58CC02',
+                        accentGreenDark:'#46A302',
+                        accentYellow:'#FFC800',
+                        accentYellowDark:'#E6A800',
+                        accentRed:   '#FF4B4B',
+                        accentRedDark:'#CC3C3C',
+                        accentBlue:  '#3B9EFF',
+                        borderLight: '#E8E8F0',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'btn-purple':'0 4px 0 #5B2EC7',
+                        'btn-green': '0 4px 0 #46A302',
+                        'btn-yellow':'0 4px 0 #E6A800',
+                        'btn-red':   '0 4px 0 #CC3C3C',
+                        'card':      '0 2px 12px rgba(30,39,73,0.07)',
+                        'card-md':   '0 4px 20px rgba(30,39,73,0.10)',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        html { scroll-behavior: smooth; }
+
+        /* 3D Button Base */
+        .btn-3d {
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 16px; padding: 14px 24px;
+            font-weight: 700; font-size: 15px; letter-spacing: 0.3px;
+            border: none; cursor: pointer;
+            transition: transform 0.08s, box-shadow 0.08s;
+            position: relative; user-select: none;
+        }
+        .btn-3d:active { transform: translateY(4px); }
+
+        .btn-purple { background: #7C4DFF; color: #fff; box-shadow: 0 4px 0 #5B2EC7; }
+        .btn-purple:active { box-shadow: 0 0 0 #5B2EC7; }
+        .btn-purple:hover:not(:active) { background: #8A5CFF; }
+
+        .btn-green { background: #58CC02; color: #fff; box-shadow: 0 4px 0 #46A302; }
+        .btn-green:active { box-shadow: 0 0 0 #46A302; }
+
+        .btn-yellow { background: #FFC800; color: #1E2749; box-shadow: 0 4px 0 #E6A800; }
+        .btn-yellow:active { box-shadow: 0 0 0 #E6A800; }
+
+        .btn-outline {
+            background: #fff; color: #7C4DFF;
+            border: 2.5px solid #E8E8F0; box-shadow: 0 4px 0 #E8E8F0;
+            border-radius: 16px; padding: 12px 24px;
+            font-weight: 700; font-size: 15px; cursor: pointer;
+            transition: transform 0.08s, box-shadow 0.08s, border-color 0.15s;
+        }
+        .btn-outline:active { transform: translateY(4px); box-shadow: 0 0 0 #E8E8F0; }
+        .btn-outline:hover { border-color: #7C4DFF; }
+
+        /* Pill stat chip */
+        .stat-chip {
+            display: flex; align-items: center; gap: 6px;
+            background: #fff; border: 2px solid #E8E8F0;
+            border-radius: 999px; padding: 6px 14px;
+            font-weight: 700; font-size: 15px; color: #1E2749;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #fff; border-top: 2px solid #E8E8F0;
+            z-index: 50; display: flex;
+        }
+        .bottom-nav a {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 10px 0 8px; gap: 3px;
+            color: #6B6F8D; font-size: 11px; font-weight: 600;
+            text-decoration: none; transition: color 0.15s;
+        }
+        .bottom-nav a.active { color: #7C4DFF; }
+        .bottom-nav a svg { width: 22px; height: 22px; }
+
+        /* Choice card */
+        .choice-card {
+            background: #fff; border: 2.5px solid #E8E8F0;
+            border-radius: 14px; padding: 14px 18px;
+            cursor: pointer; transition: border-color 0.12s, background 0.12s;
+            font-weight: 600;
+        }
+        .choice-card:hover { border-color: #7C4DFF; }
+        .choice-card.selected { border-color: #7C4DFF; background: #F0EBFF; }
+        .choice-card.correct { border-color: #58CC02; background: #F0FFF0; color: #46A302; }
+        .choice-card.incorrect { border-color: #FF4B4B; background: #FFF0F0; color: #CC3C3C; }
+
+        /* Toast */
+        #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: #1E2749; color: #fff; border-radius: 12px; padding: 12px 24px; font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(16px); transition: all 0.3s; box-shadow: 0 4px 16px rgba(30,39,73,0.2); }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #58CC02; }
+        .toast.error { background: #FF4B4B; }
+        .toast.info { background: #7C4DFF; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #F7F7FB; }
+        ::-webkit-scrollbar-thumb { background: #E8E8F0; border-radius: 4px; }
+
+        /* Page bottom padding for bottom nav */
+        main { padding-bottom: 72px; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-bgPrimary text-textPrimary min-h-screen flex flex-col antialiased">
+
+    <!-- Top Header (stats) — only for authenticated users -->
+    {% block header %}
+    {% if user.is_authenticated %}
+    <!-- Navigation Bar -->
+    <nav class="bg-[#0A192F] border-b border-[#1E2D4A] sticky top-0 z-50 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+        <div class="max-w-[1200px] mx-auto px-4 h-16 flex items-center justify-between">
+            
+            <!-- Left: Logo & Links -->
+            <div class="flex items-center gap-8">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
+                    <img src="{% static 'images/codefy.png' %}" alt="Codefy Logo" class="h-8">
+                </a>
+                
+                <div class="hidden md:flex items-center gap-6 text-[13px] font-bold text-[#8892B0]">
+                    <a href="{% url 'dashboard' %}" class="hover:text-[#00E5FF] hover:drop-shadow-[0_0_5px_rgba(0,229,255,0.5)] transition-all {% if request.path == '/dashboard/' %}text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]{% endif %}">Learn</a>
+                    <a href="{% url 'practice' %}" class="hover:text-[#00E5FF] hover:drop-shadow-[0_0_5px_rgba(0,229,255,0.5)] transition-all {% if '/practice/' in request.path or '/community/' in request.path %}text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]{% endif %}">Practice</a>
+                    <a href="{% url 'build' %}" class="hover:text-[#00E5FF] hover:drop-shadow-[0_0_5px_rgba(0,229,255,0.5)] transition-all {% if request.path == '/build/' %}text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]{% endif %}">Build</a>
+                    <a href="{% url 'leaderboard' %}" class="hover:text-[#00E5FF] hover:drop-shadow-[0_0_5px_rgba(0,229,255,0.5)] transition-all {% if request.path == '/leaderboard/' %}text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]{% endif %}">Leaderboard</a>
+                </div>
+            </div>
+
+            <!-- Right: Stats & Profile -->
+            <div class="flex items-center gap-3">
+                <!-- Coins -->
+                <div class="flex items-center gap-1.5 text-white font-bold text-[13px] bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 py-1.5 cursor-pointer border border-white/10">
+                    <div class="w-4 h-4 bg-[#FFC800] rounded-full flex items-center justify-center text-[#1c1d35] text-[9px] shadow-[0_0_5px_rgba(255,200,0,0.5)]">C</div>
+                    {{ user.userprofile.coins|default:"0" }}
+                </div>
+                <!-- Streak -->
+                <div class="flex items-center gap-1.5 text-white font-bold text-[13px] bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 py-1.5 cursor-pointer border border-white/10">
+                    <span style="color:#FF9500; font-size:14px; line-height:1; filter: drop-shadow(0 0 5px rgba(255,149,0,0.5));">🔥</span>
+                    {{ user.userprofile.streak_days|default:"0" }}
+                </div>
+                <!-- Hearts -->
+                <div class="flex items-center gap-1.5 text-white font-bold text-[13px] bg-white/5 hover:bg-white/10 transition-colors rounded-full px-3 py-1.5 cursor-pointer border border-white/10">
+                    <span style="color:#FF4B4B; font-size:14px; line-height:1; filter: drop-shadow(0 0 5px rgba(255,75,75,0.5));">❤️</span>
+                    {{ user.userprofile.hearts|default:"5" }}
+                </div>
+                <!-- Profile -->
+                <div class="relative group ml-1">
+                    <a href="{% url 'profile' %}" class="block w-8 h-8 rounded-full bg-[#112240] border-2 border-[#00E5FF] shadow-[0_0_8px_rgba(0,229,255,0.5)] hover:border-white transition-colors cursor-pointer flex items-center justify-center text-[#00E5FF]"><i data-lucide="user" class="w-4 h-4"></i></a>
+                    <!-- Dropdown -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
+                        <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#7C4DFF] font-semibold">Mening Profilim</a>
+                        <a href="{% url 'settings' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#7C4DFF] font-semibold">Sozlamalar</a>
+                        <hr class="my-1 border-gray-100">
+                        <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 font-semibold">Chiqish</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+    {% else %}
+    <!-- Guest header -->
+    <header class="bg-[#0A192F] border-b border-[#1E2D4A] sticky top-0 z-40 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+        <div class="max-w-2xl mx-auto px-4 flex items-center justify-between h-16">
+            <a href="{% url 'index' %}" class="flex items-center gap-2">
+                <img src="{% static 'images/codefy.png' %}" alt="Codefy Logo" class="h-8">
+            </a>
+            <div class="flex gap-3">
+                <a href="{% url 'login' %}" class="text-[#00E5FF] border border-[#00E5FF] rounded-xl text-sm py-2 px-4 hover:bg-[#00E5FF]/10 font-bold transition-colors">Kirish</a>
+                <a href="{% url 'register' %}" class="bg-[#00E5FF] text-[#0A192F] rounded-xl text-sm py-2 px-4 font-bold shadow-[0_0_10px_rgba(0,229,255,0.5)] hover:bg-[#40E0D0] transition-colors">Boshlash</a>
+            </div>
+        </div>
+    </header>
+    {% endif %}
+    {% endblock %}
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bottom Navigation (only authenticated) -->
+    {% if user.is_authenticated %}
+    <nav class="bottom-nav md:hidden">
+        <a href="{% url 'dashboard' %}" id="nav-learn" class="{% block nav_learn %}{% endblock %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+            O'rganish
+        </a>
+        <a href="{% url 'practice' %}" id="nav-practice" class="{% block nav_practice %}{% endblock %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            Mashq
+        </a>
+        <a href="{% url 'leaderboard' %}" id="nav-leaderboard" class="{% block nav_leaderboard %}{% endblock %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M8 6l4-4 4 4"/><path d="M12 2v10"/><path d="M4 20h16"/><rect x="2" y="14" width="5" height="6" rx="1"/><rect x="9.5" y="11" width="5" height="9" rx="1"/><rect x="17" y="16" width="5" height="4" rx="1"/>
+            </svg>
+            Reyting
+        </a>
+        <a href="{% url 'profile' %}" id="nav-profile" class="{% block nav_profile %}{% endblock %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            Profil
+        </a>
+    </nav>
+    {% endif %}
+
+    <!-- Robot Mascot Template (used in various pages) -->
+    <template id="mascot-happy">
+        <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="25" width="50" height="45" rx="12" fill="#7C4DFF"/>
+            <rect x="22" y="33" width="36" height="28" rx="8" fill="#1E2749"/>
+            <!-- Heart eyes -->
+            <path d="M30 44 C30 41,27 40,27 43 C27 46,30 48,30 48 C30 48,33 46,33 43 C33 40,30 41,30 44Z" fill="#FF4B4B"/>
+            <path d="M50 44 C50 41,47 40,47 43 C47 46,50 48,50 48 C50 48,53 46,53 43 C53 40,50 41,50 44Z" fill="#FF4B4B"/>
+            <!-- Smile -->
+            <path d="M33 55 Q40 61 47 55" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- Antenna -->
+            <line x1="40" y1="25" x2="40" y2="15" stroke="#7C4DFF" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="40" cy="13" r="4" fill="#FFC800"/>
+            <!-- Arms -->
+            <rect x="5" y="35" width="10" height="20" rx="5" fill="#7C4DFF"/>
+            <rect x="65" y="35" width="10" height="20" rx="5" fill="#7C4DFF"/>
+            <!-- Legs -->
+            <rect x="24" y="68" width="12" height="20" rx="6" fill="#5B2EC7"/>
+            <rect x="44" y="68" width="12" height="20" rx="6" fill="#5B2EC7"/>
+        </svg>
+    </template>
+    <template id="mascot-neutral">
+        <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="25" width="50" height="45" rx="12" fill="#7C4DFF"/>
+            <rect x="22" y="33" width="36" height="28" rx="8" fill="#1E2749"/>
+            <circle cx="30" cy="46" r="4" fill="white"/>
+            <circle cx="50" cy="46" r="4" fill="white"/>
+            <circle cx="31" cy="47" r="2" fill="#1E2749"/>
+            <circle cx="51" cy="47" r="2" fill="#1E2749"/>
+            <line x1="33" y1="57" x2="47" y2="57" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="40" y1="25" x2="40" y2="15" stroke="#7C4DFF" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="40" cy="13" r="4" fill="#FFC800"/>
+            <rect x="5" y="35" width="10" height="20" rx="5" fill="#7C4DFF"/>
+            <rect x="65" y="35" width="10" height="20" rx="5" fill="#7C4DFF"/>
+            <rect x="24" y="68" width="12" height="20" rx="6" fill="#5B2EC7"/>
+            <rect x="44" y="68" width="12" height="20" rx="6" fill="#5B2EC7"/>
+        </svg>
+    </template>
+
+    <script src="{% static 'js/utils.js' %}"></script>
+    <script>
+        lucide.createIcons();
+
+        // Toast system
+        window.showToast = function(msg, type='info') {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
+            setTimeout(() => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 350);
+            }, 3200);
+        };
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

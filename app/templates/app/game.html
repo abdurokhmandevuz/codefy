@@ -1,0 +1,54 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}O'yin - Bosqichlar{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-12">
+        <div class="inline-block bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
+            Bug Hunter
+        </div>
+        <h1 class="text-4xl font-bold mb-4">Mantiqiy xatolarni ovlang!</h1>
+        <p class="text-textSecondary text-lg max-w-2xl mx-auto">
+            Haqiqiy dasturchilar kunining yarmini xato qidirish (debugging) bilan o'tkazishadi. 
+            Ushbu o'yinda siz atayin xato yozilgan kodlarni topib, to'g'rilashingiz kerak.
+        </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for level in levels %}
+        <div class="bg-bgCard border border-borderSubtle rounded-xl p-6 relative overflow-hidden group {% if level.level_number > unlocked %}opacity-50 grayscale{% endif %}">
+            
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 bg-bgSecondary border border-borderSubtle rounded-lg flex items-center justify-center text-xl font-bold text-accentYellow">
+                    {{ level.level_number }}
+                </div>
+                {% if level.level_number > unlocked %}
+                <i data-lucide="lock" class="w-5 h-5 text-textSecondary"></i>
+                {% else %}
+                <i data-lucide="unlock" class="w-5 h-5 text-accentGreen"></i>
+                {% endif %}
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2 group-hover:text-accentYellow transition-colors">{{ level.title }}</h3>
+            <p class="text-sm text-textSecondary mb-6 line-clamp-2">{{ level.description }}</p>
+            
+            {% if level.level_number <= unlocked %}
+            <a href="{% url 'game_play' level.level_number %}" class="inline-block w-full text-center bg-bgSecondary border border-borderSubtle hover:border-accentYellow text-white font-medium py-2 rounded transition-colors">
+                O'ynash
+            </a>
+            {% else %}
+            <button disabled class="w-full text-center bg-bgSecondary border border-borderSubtle text-textSecondary font-medium py-2 rounded cursor-not-allowed">
+                Qulflangan
+            </button>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center p-12 bg-bgCard rounded-xl border border-borderSubtle text-textSecondary">
+            Hozircha bosqichlar qo'shilmagan. Admin panel orqali qo'shing.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

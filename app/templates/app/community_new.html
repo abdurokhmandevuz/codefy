@@ -1,0 +1,152 @@
+{% extends 'app/base.html' %}
+{% block title %}Yangi Savol | Codefy{% endblock %}
+{% block nav_community %}active{% endblock %}
+
+{% block content %}
+<style>
+    .new-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px 16px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: #1E2749;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+    .form-input, .form-textarea, .form-select {
+        width: 100%;
+        background: #FFFFFF;
+        border: 2px solid #E8E8F0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 15px;
+        color: #1E2749;
+        transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        outline: none;
+        border-color: #7C4DFF;
+    }
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .code-editor-wrapper {
+        display: none;
+        margin-top: 10px;
+    }
+    .code-editor-wrapper.active {
+        display: block;
+    }
+    .code-textarea {
+        background: #1E2749;
+        color: #F8F8F2;
+        font-family: 'JetBrains Mono', monospace;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 150px;
+    }
+    .code-textarea:focus { outline: 2px solid #7C4DFF; }
+    
+    .toggle-code-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #F0EBFF;
+        color: #7C4DFF;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    
+    .alert-error {
+        background: #FFF0F0;
+        border: 2px solid #FF4B4B;
+        color: #CC3C3C;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="new-container">
+    <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 24px;">
+        <a href="{% url 'community_list' %}" style="color: #6B6F8D;"><i data-lucide="arrow-left"></i></a>
+        <h1 style="font-size: 20px; font-weight: 800; color: #1E2749;">Yangi muhokama</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label">Sarlavha</label>
+            <input type="text" name="title" class="form-input" placeholder="Savolning qisqacha mazmuni..." required value="{{ title|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Batafsil ta'rif</label>
+            <textarea name="body" class="form-textarea" placeholder="Nima haqida so'ramoqchisiz?" required>{{ body|default:'' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <button type="button" class="toggle-code-btn" id="toggleCodeBtn">
+                <i data-lucide="code" style="width:16px; height:16px;"></i> Kod qo'shish
+            </button>
+            
+            <div class="code-editor-wrapper" id="codeWrapper" {% if code_snippet %}style="display:block;"{% endif %}>
+                <select name="code_language" class="form-select" style="margin-bottom: 8px;">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="html">HTML/CSS</option>
+                </select>
+                <textarea name="code_snippet" class="form-textarea code-textarea" placeholder="Kodingizni shu yerga tashlang...">{{ code_snippet|default:'' }}</textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Qaysi darsga tegishli? (Ixtiyoriy)</label>
+            <select name="lesson_id" class="form-select">
+                <option value="">- Darsni tanlamaslik -</option>
+                {% for l in lessons %}
+                <option value="{{ l.id }}">{{ l.module.title }} - {{ l.title }}</option>
+                {% endfor %}
+            </select>
+            <p style="font-size:12px; color:#6B6F8D; margin-top:6px;">Boshqa o'quvchilarga oson topishlari uchun yordam beradi.</p>
+        </div>
+        
+        <button type="submit" class="btn-3d btn-purple" style="width: 100%; margin-top: 20px;">
+            Yuborish (+5 XP)
+        </button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('toggleCodeBtn').addEventListener('click', function() {
+        const wrapper = document.getElementById('codeWrapper');
+        wrapper.classList.toggle('active');
+    });
+</script>
+{% endblock %}

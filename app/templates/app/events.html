@@ -1,0 +1,168 @@
+{% extends 'app/base.html' %}
+{% block title %}Live Sessions | Codefy{% endblock %}
+
+{% block content %}
+<style>
+    body { background-color: #1F1E3C !important; color: #FFFFFF !important; }
+    
+    .events-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+    
+    /* Top Max Ad Banner */
+    .max-banner {
+        background: #252347;
+        border: 1px solid #7C4DFF;
+        border-radius: 16px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+    
+    .max-title { font-size: 24px; font-weight: 900; margin-bottom: 16px; }
+    
+    .stars { color: #FFC800; font-size: 16px; margin-bottom: 8px; }
+    .testimonial { font-size: 13px; font-style: italic; max-width: 300px; line-height: 1.5; margin-bottom: 8px; }
+    .testimonial-author { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #a5a4c0; display: flex; align-items: center; gap: 8px; }
+    
+    .max-features { font-size: 14px; line-height: 2; margin-bottom: 20px; }
+    .max-features span { color: #7C4DFF; margin-right: 8px; font-weight: bold; }
+    
+    .btn-max {
+        background: #9d72ff;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 800;
+        font-size: 15px;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* Live Sessions Section */
+    .sessions-title { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+    
+    .tabs {
+        display: flex;
+        gap: 24px;
+        border-bottom: 1px solid #313054;
+        margin-bottom: 30px;
+    }
+    .tab {
+        font-size: 12px; font-weight: 800; text-transform: uppercase;
+        padding-bottom: 12px; cursor: pointer; color: #a5a4c0;
+    }
+    .tab.active { color: #fff; border-bottom: 2px solid #fff; }
+    
+    /* Date Label */
+    .date-label { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    
+    /* Event Card */
+    .event-card {
+        background: #252347;
+        border: 1px solid #313054;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .event-time { font-size: 12px; font-weight: 700; color: #a5a4c0; margin-bottom: 8px; }
+    .event-title { font-size: 20px; font-weight: 800; margin-bottom: 24px; }
+    
+    .event-details {
+        display: flex;
+        gap: 40px;
+    }
+    .detail-col { display: flex; flex-direction: column; gap: 4px; }
+    .detail-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #a5a4c0; }
+    .detail-val { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    
+    .event-img {
+        width: 100px; height: 100px;
+        background: #1c1d35;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    
+</style>
+
+<div class="events-container">
+    
+    <!-- Max Banner -->
+    <div class="max-banner">
+        <div>
+            <div class="max-title">Dasturlash karyerangizni<br>Codefy bilan boshlang!</div>
+            <div class="stars">★★★★★</div>
+            <div class="testimonial">"Codefy yordamida men birinchi dasturlash ishimga kirish uchun kerakli ko'nikmalarni oldim"</div>
+            <div class="testimonial-author"><img src="https://ui-avatars.com/api/?name=Peter&background=random" width="20" style="border-radius:50%;"> PETER</div>
+        </div>
+        <div style="width:300px;">
+            <div style="font-size:24px; font-weight:900; color:#9d72ff; margin-bottom:12px;">max</div>
+            <div class="max-features">
+                <div><span>✓</span> Full course library</div>
+                <div><span>✓</span> Unlimited project spaces</div>
+                <div><span>✓</span> Unlimited AI tutor access</div>
+                <div><span>✓</span> Live sessions</div>
+            </div>
+            <button class="btn-max" onclick="window.location.href='{% url 'pricing' %}'">Start 7-day free trial</button>
+        </div>
+    </div>
+    
+    <!-- Sessions -->
+    <div class="sessions-title">Live Sessions</div>
+    
+    <div class="tabs">
+        <div class="tab active">UPCOMING</div>
+        <div class="tab">PAST RECORDINGS</div>
+    </div>
+    
+    {% for session in upcoming_sessions %}
+    <div class="date-label">{{ session.datetime|date:"j F l" }}</div>
+    
+    <div class="event-card">
+        <div>
+            <div class="event-time">{{ session.datetime|time:"g:i A" }} {{ session.timezone_label }}</div>
+            <div class="event-title">{{ session.title }}</div>
+            
+            <div class="event-details">
+                <div class="detail-col">
+                    <span class="detail-label">PREREQUISITES</span>
+                    <span class="detail-val">• {{ session.prerequisites }}</span>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">HOSTED BY</span>
+                    <span class="detail-val"><img src="https://ui-avatars.com/api/?name={{ session.host_name }}" width="16" style="border-radius:50%;"> {{ session.host_name }}</span>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">GOING</span>
+                    <span class="detail-val">{{ session.going_count }} Learner{% if session.going_count != 1 %}s{% endif %}</span>
+                </div>
+            </div>
+        </div>
+        <div class="event-img">
+            {% if session.svg_badge %}
+                {{ session.svg_badge|safe }}
+            {% else %}
+                <svg width="60" height="60" viewBox="0 0 100 100">
+                    <rect x="10" y="20" width="40" height="40" fill="#E44D26" rx="8"/>
+                    <text x="30" y="45" fill="white" font-size="20" font-weight="bold" font-family="sans-serif" text-anchor="middle">5</text>
+                    <rect x="40" y="40" width="40" height="40" fill="#F7DF1E" rx="8"/>
+                    <text x="60" y="65" fill="black" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle">JS</text>
+                </svg>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-[#a5a4c0] text-center py-10">No upcoming sessions.</div>
+    {% endfor %}
+    
+</div>
+{% endblock %}

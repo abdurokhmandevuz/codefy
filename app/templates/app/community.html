@@ -1,0 +1,212 @@
+{% extends 'app/base.html' %}
+{% block title %}Hamjamiyat | Codefy{% endblock %}
+{% block nav_practice %}active{% endblock %}
+
+{% block content %}
+<style>
+    .community-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px 16px;
+    }
+    
+    .filter-pills {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+        scrollbar-width: none;
+    }
+    .filter-pills::-webkit-scrollbar { display: none; }
+    
+    .pill {
+        white-space: nowrap;
+        padding: 8px 16px;
+        background: #FFFFFF;
+        border: 2px solid #E8E8F0;
+        border-radius: 99px;
+        color: #6B6F8D;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .pill.active {
+        background: #F0EBFF;
+        border-color: #7C4DFF;
+        color: #7C4DFF;
+    }
+    
+    .discussion-card {
+        background: #FFFFFF;
+        border: 2px solid #E8E8F0;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+        text-decoration: none;
+        display: block;
+        transition: transform 0.1s, border-color 0.2s;
+    }
+    .discussion-card:hover {
+        border-color: #7C4DFF;
+        transform: translateY(-2px);
+    }
+    
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7C4DFF, #3B9EFF);
+    }
+    .author-name {
+        color: #1E2749;
+        font-weight: 700;
+        font-size: 14px;
+    }
+    .post-time {
+        color: #8B8B9E;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .post-title {
+        color: #1E2749;
+        font-weight: 800;
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+    .post-preview {
+        color: #6B6F8D;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .post-tags {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .tag {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+    }
+    .tag-lesson { background: #E6F3FF; color: #3B9EFF; }
+    .tag-code { background: #F0FFF0; color: #46A302; }
+    
+    .post-stats {
+        display: flex;
+        gap: 16px;
+        border-top: 1px solid #E8E8F0;
+        padding-top: 12px;
+    }
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #6B6F8D;
+        font-weight: 600;
+        font-size: 13px;
+    }
+    .stat-item svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .ask-fab {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        background: #7C4DFF;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(124, 77, 255, 0.4);
+        transition: transform 0.2s;
+        z-index: 40;
+    }
+    .ask-fab:active { transform: scale(0.9); }
+    @media (min-width: 768px) {
+        .ask-fab { bottom: 30px; }
+    }
+</style>
+
+<div class="community-container">
+    <!-- Top Tab Switcher -->
+    <div style="display:flex; justify-content:center; margin-bottom: 24px; border-bottom: 2px solid #E8E8F0; padding-bottom: 12px;">
+        <a href="{% url 'practice' %}" style="flex:1; text-align:center; color:#6B6F8D; font-weight:700; font-size:16px; text-decoration:none; padding-bottom:12px; margin-bottom:-14px;">Amaliyot</a>
+        <a href="{% url 'community_list' %}" style="flex:1; text-align:center; color:#7C4DFF; font-weight:800; font-size:16px; text-decoration:none; padding-bottom:12px; border-bottom:3px solid #7C4DFF; margin-bottom:-14px;">Hamjamiyat</a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-pills">
+        <a href="?filter=all" class="pill {% if filter_type == 'all' %}active{% endif %}">Barchasi</a>
+        <a href="?filter=questions" class="pill {% if filter_type == 'questions' %}active{% endif %}">Savollar</a>
+        <a href="?filter=code" class="pill {% if filter_type == 'code' %}active{% endif %}">Kod ulashish</a>
+        <a href="?filter=my_lessons" class="pill {% if filter_type == 'my_lessons' %}active{% endif %}">Mening darsim</a>
+    </div>
+
+    <!-- Discussions List -->
+    <div>
+        {% for d in discussions %}
+        <a href="{% url 'community_detail' d.id %}" class="discussion-card">
+            <div class="author-info">
+                <div class="avatar"></div>
+                <div>
+                    <div class="author-name">{{ d.user.username }}</div>
+                    <div class="post-time">{{ d.created_at|date:"d M Y, H:i" }}</div>
+                </div>
+            </div>
+            
+            <div class="post-title">{{ d.title }}</div>
+            <div class="post-preview">{{ d.body }}</div>
+            
+            <div class="post-tags">
+                {% if d.lesson %}
+                <span class="tag tag-lesson">📘 {{ d.lesson.title }}</span>
+                {% endif %}
+                {% if d.code_snippet %}
+                <span class="tag tag-code">💻 Kod</span>
+                {% endif %}
+            </div>
+            
+            <div class="post-stats">
+                <div class="stat-item">
+                    <i data-lucide="heart"></i> {{ d.likes_count }}
+                </div>
+                <div class="stat-item">
+                    <i data-lucide="message-square"></i> {{ d.comments.count }}
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div style="text-align:center; padding: 40px 20px; color: #8B8B9E;">
+            <i data-lucide="users" style="width:48px; height:48px; margin:0 auto 16px; opacity:0.5;"></i>
+            <p>Hozircha hech qanday muhokama yo'q.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- FAB -->
+    <a href="{% url 'community_new' %}" class="ask-fab">
+        <i data-lucide="plus" style="width:28px; height:28px;"></i>
+    </a>
+</div>
+{% endblock %}
