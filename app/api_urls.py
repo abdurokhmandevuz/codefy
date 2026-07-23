@@ -11,4 +11,5 @@ urlpatterns = [
     path('courses/', api_views.get_courses, name='api_courses'),
     path('lesson/<int:lesson_id>/', api_views.get_lesson_detail, name='api_lesson_detail'),
     path('lesson/<int:lesson_id>/complete/', api_views.complete_lesson, name='api_lesson_complete'),
+    path('practice/', api_views.get_practice_cards, name='api_practice_cards'),
 ]

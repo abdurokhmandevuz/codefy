@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .models import UserProfile, Course, Lesson, LessonProgress
-from .api_serializers import UserSerializer, CourseSerializer, LessonSerializer
+from .models import UserProfile, Course, Lesson, LessonProgress, PracticeCard
+from .api_serializers import UserSerializer, CourseSerializer, LessonSerializer, PracticeCardSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password
 
@@ -86,3 +86,10 @@ def complete_lesson(request, lesson_id):
         return Response({'status': 'success', 'xp_earned': 10})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_practice_cards(request):
+    cards = PracticeCard.objects.all().order_by('order')
+    serializer = PracticeCardSerializer(cards, many=True)
+    return Response(serializer.data)

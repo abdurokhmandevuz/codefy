@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, Course, Module, Lesson, LessonProgress
+from .models import UserProfile, Course, Module, Lesson, LessonProgress, PracticeCard
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,3 +41,8 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'track_type', 'modules']
+
+class PracticeCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PracticeCard
+        fields = ['id', 'title', 'description', 'icon_emoji', 'order']
