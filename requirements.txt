@@ -10,3 +10,4 @@ django-cors-headers==4.9.0
 python-dotenv==1.2.2
 pillow==11.3.0
 drf-spectacular
+requests==2.32.3
