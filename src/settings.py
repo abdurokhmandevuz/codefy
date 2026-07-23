@@ -147,6 +147,7 @@ CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'app.authentication.SupabaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -156,3 +157,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
 }
+
+# Supabase Auth configuration
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://xclifgbtswquejongpvx.supabase.co')
+SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY', 'sb_publishable_Y-FaSPHDW21RoAbsAZBACA_6GHK3cfD')
