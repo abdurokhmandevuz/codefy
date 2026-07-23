@@ -9,3 +9,4 @@ psycopg2-binary==2.9.12
 django-cors-headers==4.9.0
 python-dotenv==1.2.2
 pillow==11.3.0
+drf-spectacular

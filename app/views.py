@@ -9,6 +9,10 @@ from .models import UserProfile, GameLevel, UserGameScore, Course, Module, Lesso
 import json
 
 def index(request):
+    host = request.get_host()
+    if host.startswith('api.'):
+        return redirect('/api/docs/')
+        
     goals = LandingGoal.objects.all().order_by('order')
     features = LandingFeature.objects.all().order_by('order')
     tech_tags = TechTag.objects.all().order_by('order')
