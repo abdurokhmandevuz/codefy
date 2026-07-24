@@ -24,12 +24,19 @@ class Module(models.Model):
         return f"{self.order}-Modul: {self.title}"
 
 class Lesson(models.Model):
+    LESSON_TYPE_CHOICES = [('theory', 'Theory'), ('test', 'Test'), ('code', 'Code Editor')]
+
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True) # for guided project desc
     content = models.TextField() # HTML or Markdown text for the lesson
+    type = models.CharField(max_length=20, choices=LESSON_TYPE_CHOICES, default='theory')
+    options = models.JSONField(default=list, blank=True)
+    correct_option = models.CharField(max_length=255, blank=True)
     initial_code = models.TextField(blank=True)
     expected_output = models.CharField(max_length=200, blank=True)
+    xp_reward = models.IntegerField(default=10)
+    coins_reward = models.IntegerField(default=5)
     order = models.IntegerField(default=1)
     is_premium = models.BooleanField(default=False)
     is_practice = models.BooleanField(default=False)

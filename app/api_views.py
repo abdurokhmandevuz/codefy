@@ -3,8 +3,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F
-from .models import UserProfile, Course, Lesson, LessonProgress, PracticeCard, PracticeTask, PracticeTaskProgress
+from .models import UserProfile, Course, Module, Lesson, LessonProgress, PracticeCard, PracticeTask, PracticeTaskProgress
 from .api_serializers import UserSerializer, CourseSerializer, LessonSerializer, PracticeCardSerializer, UserProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password
@@ -63,8 +64,7 @@ def decrease_heart(request):
     user = request.user
     try:
         profile = user.userprofile
-    except Exception:
-        from .models import UserProfile
+    except UserProfile.DoesNotExist:
         profile = UserProfile.objects.create(user=user)
     if profile.hearts > 0:
         profile.hearts = F('hearts') - 1
@@ -82,8 +82,7 @@ def refill_hearts(request):
     user = request.user
     try:
         profile = user.userprofile
-    except Exception:
-        from .models import UserProfile
+    except UserProfile.DoesNotExist:
         profile = UserProfile.objects.create(user=user)
         
     COST = 20
@@ -107,53 +106,121 @@ def refill_hearts(request):
 @permission_classes([IsAuthenticated])
 def get_courses(request):
     courses = Course.objects.all()
-    serializer = CourseSerializer(courses, many=True, context={'request': request})
+    user = request.user if (hasattr(request, 'user') and request.user.is_authenticated) else None
+    progress_map = {}
+    if user:
+        progresses = LessonProgress.objects.filter(user=user)
+        progress_map = {p.lesson_id: p for p in progresses}
+    serializer = CourseSerializer(courses, many=True, context={'request': request, 'user': user, 'progress_map': progress_map})
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_lesson_detail(request, lesson_id):
     try:
         lesson = Lesson.objects.get(id=lesson_id)
-        return Response({
-            'id': lesson.id,
-            'title': lesson.title,
-            'content': lesson.content,
-            'initial_code': lesson.initial_code,
-            'expected_output': lesson.expected_output,
-            'is_premium': lesson.is_premium
+        user = request.user if (hasattr(request, 'user') and request.user.is_authenticated) else None
+        progress = None
+        progress_map = {}
+        if user:
+            progress = LessonProgress.objects.filter(user=user, lesson=lesson).first()
+            if progress:
+                progress_map[lesson.id] = progress
+        serializer = LessonSerializer(lesson, context={
+            'request': request,
+            'user': user,
+            'progress': progress,
+            'progress_map': progress_map
         })
+        return Response(serializer.data)
     except Lesson.DoesNotExist:
         return Response({'error': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def complete_lesson(request, lesson_id):
     try:
         lesson = Lesson.objects.get(id=lesson_id)
-        progress, created = LessonProgress.objects.get_or_create(
-            user=request.user,
-            lesson=lesson
-        )
+    except Lesson.DoesNotExist:
+        return Response({'success': False, 'message': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        if progress.status != 'completed':
-            progress.status = 'completed'
-            progress.progress_percent = 100
-            progress.save()
-            
-            # Add XP
-            try:
-                profile = request.user.userprofile
-            except Exception:
-                from .models import UserProfile
-                profile = UserProfile.objects.create(user=request.user)
-            profile.total_xp += 10
-            profile.coins += 5
-            profile.save()
-            
-        return Response({'status': 'success', 'xp_earned': 10})
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    user = request.user
+    if not user or user.is_anonymous:
+        user = User.objects.first()
+
+    if not user:
+        return Response({'success': False, 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    data = request.data or {}
+    answer = data.get('answer')
+
+    # Validate answer based on lesson type
+    if lesson.type == 'test':
+        is_correct = False
+        if answer is not None:
+            user_str = str(answer).strip()
+            correct_str = str(lesson.correct_option).strip()
+            if user_str == correct_str:
+                is_correct = True
+            elif user_str.isdigit() and isinstance(lesson.options, list):
+                idx = int(user_str)
+                if 0 <= idx < len(lesson.options) and str(lesson.options[idx]).strip() == correct_str:
+                    is_correct = True
+            elif correct_str.isdigit() and isinstance(lesson.options, list):
+                idx = int(correct_str)
+                if 0 <= idx < len(lesson.options) and str(lesson.options[idx]).strip() == user_str:
+                    is_correct = True
+        if not is_correct:
+            return Response({'success': False, 'message': 'Incorrect answer'}, status=status.HTTP_400_BAD_REQUEST)
+
+    elif lesson.type == 'code':
+        if lesson.expected_output:
+            if answer is None or str(answer).strip() != str(lesson.expected_output).strip():
+                return Response({'success': False, 'message': 'Incorrect answer'}, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        # Update LessonProgress for current lesson
+        progress, _ = LessonProgress.objects.get_or_create(user=user, lesson=lesson)
+        progress.status = 'completed'
+        progress.progress_percent = 100
+        progress.save()
+
+        # Update UserProfile stats
+        try:
+            profile = user.userprofile
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+
+        profile.total_xp += lesson.xp_reward
+        profile.coins += lesson.coins_reward
+        profile.save()
+        profile.refresh_from_db()
+
+        # Find next lesson in order
+        next_lesson = Lesson.objects.filter(module=lesson.module, order__gt=lesson.order).order_by('order').first()
+        if not next_lesson and lesson.module:
+            next_module = Module.objects.filter(course=lesson.module.course, order__gt=lesson.module.order).order_by('order').first()
+            if next_module:
+                next_lesson = Lesson.objects.filter(module=next_module).order_by('order').first()
+
+        if next_lesson:
+            next_progress, _ = LessonProgress.objects.get_or_create(user=user, lesson=next_lesson)
+            if next_progress.status != 'completed':
+                next_progress.status = 'in_progress'
+                next_progress.save()
+
+    return Response({
+        'success': True,
+        'message': 'Lesson completed successfully',
+        'gained_xp': lesson.xp_reward,
+        'gained_coins': lesson.coins_reward,
+        'user_stats': {
+            'coins': profile.coins,
+            'xp': profile.total_xp,
+            'streak': profile.streak_days
+        },
+        'next_lesson_id': next_lesson.id if next_lesson else None
+    })
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -180,8 +247,7 @@ def complete_practice_task(request, task_id):
             # Add XP
             try:
                 profile = request.user.userprofile
-            except Exception:
-                from .models import UserProfile
+            except UserProfile.DoesNotExist:
                 profile = UserProfile.objects.create(user=request.user)
             profile.total_xp += task.xp_reward
             profile.coins += task.xp_reward // 2

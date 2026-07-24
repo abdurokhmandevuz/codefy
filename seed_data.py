@@ -77,14 +77,93 @@ PracticeCard.objects.create(title="Review and reinforce", description="Revisit p
 PracticeCard.objects.create(title="Improve problem-solving", description="Enhance your skills with challenging exercises", icon_emoji="💡", order=3)
 
 print("Seeding Course / Dashboard data...")
-c = Course.objects.create(title="Full-Stack Developer Career Path", description="", track_type="both")
-m = Module.objects.create(course=c, title="Intro to Web Development", description="Create webpages using HTML and CSS", order=1)
-Lesson.objects.create(module=m, title="Discovering HTML and Tags", content="...", order=1)
-Lesson.objects.create(module=m, title="Structuring Text with Tags", content="...", order=2)
-Lesson.objects.create(module=m, title="HTML Basics 1", content="...", order=3, is_practice=True, is_supercharge=True)
-Lesson.objects.create(module=m, title="Creating Links", content="...", order=4)
-Lesson.objects.create(module=m, title="Adding Images", content="...", order=5)
-Lesson.objects.create(module=m, title="HTML Basics 2", content="...", order=6, is_practice=True, is_supercharge=True)
-Lesson.objects.create(module=m, title="Linktree", description="Get ready to build your very own Linktree-style page, where you can showcase all your socials and other links you care about in one spot.", content="...", order=7, is_guided_project=True)
+c = Course.objects.create(title="Full-Stack Developer Career Path", description="Comprehensive path from zero to full-stack web developer.", track_type="both")
+m = Module.objects.create(course=c, title="Intro to Web Development & Python", description="Create webpages using HTML and CSS, master Python basics.", order=1)
+
+Lesson.objects.create(
+    module=m,
+    title="Discovering HTML and Tags",
+    type="theory",
+    content="HTML (HyperText Markup Language) — veb-sahifalar tuzilishini yaratuvchi standart tildir. Teglar yordamida kontent tuzilmasi beriladi.",
+    xp_reward=10,
+    coins_reward=5,
+    order=1
+)
+Lesson.objects.create(
+    module=m,
+    title="Python Print Test",
+    type="test",
+    content="Python tilida matnni ekranga chiqarish uchun qaysi funksiya ishlatiladi?",
+    options=["print()", "input()", "len()", "str()"],
+    correct_option="print()",
+    xp_reward=15,
+    coins_reward=10,
+    order=2
+)
+Lesson.objects.create(
+    module=m,
+    title="Hello World Coding Challenge",
+    type="code",
+    content="Chiqaruvchi dastur yozing va 'Hello World' chop eting.",
+    initial_code="print('Hello World')",
+    expected_output="Hello World",
+    xp_reward=20,
+    coins_reward=15,
+    order=3,
+    is_practice=True,
+    is_supercharge=True
+)
+Lesson.objects.create(
+    module=m,
+    title="Structuring Text with Tags",
+    type="theory",
+    content="HTMLda sarlavhalar <h1> dan <h6> gacha bo'lgan teglar bilan aniqlanadi. <h1> eng katta sarlavhadir.",
+    xp_reward=10,
+    coins_reward=5,
+    order=4
+)
+Lesson.objects.create(
+    module=m,
+    title="Data Types Quiz",
+    type="test",
+    content="Python-da 'Hello' qaysi ma'lumot turiga kiradi?",
+    options=["str", "int", "float", "bool"],
+    correct_option="str",
+    xp_reward=15,
+    coins_reward=10,
+    order=5
+)
+Lesson.objects.create(
+    module=m,
+    title="Sum Calculation Code Challenge",
+    type="code",
+    content="5 va 10 sonlarining yig'indisini ekranga chiqaring.",
+    initial_code="a = 5\nb = 10\nprint(a + b)",
+    expected_output="15",
+    xp_reward=25,
+    coins_reward=15,
+    order=6,
+    is_practice=True,
+    is_supercharge=True
+)
+Lesson.objects.create(
+    module=m,
+    title="Linktree",
+    type="theory",
+    description="Get ready to build your very own Linktree-style page, where you can showcase all your socials and other links you care about in one spot.",
+    content="Linktree loyihasini yaratish bo'yicha ko'rsatmalar...",
+    xp_reward=50,
+    coins_reward=30,
+    order=7,
+    is_guided_project=True
+)
+
+print("Seeding default user...")
+user, created = User.objects.get_or_create(username="demo", defaults={"email": "demo@codefy.uz"})
+if created:
+    user.set_password("password123")
+    user.save()
+from app.models import UserProfile
+profile, _ = UserProfile.objects.get_or_create(user=user)
 
 print("Seed complete.")
