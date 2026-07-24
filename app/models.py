@@ -140,6 +140,31 @@ class PracticeCard(models.Model):
     def __str__(self):
         return self.title
 
+class PracticeTask(models.Model):
+    card = models.ForeignKey(PracticeCard, on_delete=models.CASCADE, related_name='tasks')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    initial_code = models.TextField(blank=True)
+    expected_output = models.CharField(max_length=200, blank=True)
+    difficulty = models.CharField(max_length=50, choices=[('easy', 'Oson'), ('medium', 'O\'rta'), ('hard', 'Qiyin')], default='easy')
+    xp_reward = models.IntegerField(default=10)
+    order = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.card.title} - {self.title}"
+
+class PracticeTaskProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='practice_progress')
+    task = models.ForeignKey(PracticeTask, on_delete=models.CASCADE)
+    is_completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'task')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.task.title} ({'Completed' if self.is_completed else 'Pending'})"
+
 # --- New Landing Page Models ---
 class LandingGoal(models.Model):
     title = models.CharField(max_length=100)

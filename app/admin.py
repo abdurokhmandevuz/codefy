@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Course, Module, Lesson, Badge, UserProfile, GameLevel, UserGameScore,
-    LessonProgress, CareerPath, LiveSession, PracticeCard, LandingGoal, 
+    LessonProgress, CareerPath, LiveSession, PracticeCard, PracticeTask, PracticeTaskProgress, LandingGoal, 
     LandingFeature, TechTag, LandingReview, Achievement, UserAchievement, 
     Friendship, Project, ProjectFile, BannedWord, Discussion, Comment, Like, Report
 )
@@ -116,6 +116,18 @@ class PracticeCardAdmin(admin.ModelAdmin):
     list_display = ('title', 'order')
     ordering = ('order',)
 
+@admin.register(PracticeTask)
+class PracticeTaskAdmin(admin.ModelAdmin):
+    list_display = ('title', 'card', 'difficulty', 'xp_reward', 'order')
+    list_filter = ('card', 'difficulty')
+    search_fields = ('title', 'description')
+
+@admin.register(PracticeTaskProgress)
+class PracticeTaskProgressAdmin(admin.ModelAdmin):
+    list_display = ('user', 'task', 'is_completed', 'completed_at')
+    list_filter = ('is_completed',)
+    search_fields = ('user__username', 'task__title')
+
 @admin.register(LiveSession)
 class LiveSessionAdmin(admin.ModelAdmin):
     list_display = ('title', 'datetime', 'host_name', 'is_past', 'going_count')
@@ -158,8 +170,8 @@ def get_custom_app_list(self, request, app_label=None):
         
         # Define categories and their models
         categories = {
-            "1. Darslar va O'quv (Kurslar)": ['Course', 'Module', 'Lesson', 'PracticeCard', 'LiveSession', 'CareerPath'],
-            "2. Foydalanuvchilar va Yutuqlar": ['UserProfile', 'LessonProgress', 'Achievement', 'UserAchievement', 'Badge', 'Friendship'],
+            "1. Darslar va O'quv (Kurslar)": ['Course', 'Module', 'Lesson', 'PracticeCard', 'PracticeTask', 'LiveSession', 'CareerPath'],
+            "2. Foydalanuvchilar va Yutuqlar": ['UserProfile', 'LessonProgress', 'PracticeTaskProgress', 'Achievement', 'UserAchievement', 'Badge', 'Friendship'],
             "3. Hamjamiyat va Muhokamalar": ['Discussion', 'Comment', 'Like', 'Report', 'BannedWord'],
             "4. Loyihalar va O'yinlar": ['Project', 'ProjectFile', 'GameLevel', 'UserGameScore'],
             "5. Landing Sahifa (Asosiy)": ['LandingGoal', 'LandingFeature', 'TechTag', 'LandingReview'],
