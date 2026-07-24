@@ -56,6 +56,22 @@ def update_user_profile(request):
     
     return Response({'status': 'success'})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@extend_schema(exclude=True)
+def decrease_heart(request):
+    user = request.user
+    profile = user.userprofile
+    if profile.hearts > 0:
+        profile.hearts = F('hearts') - 1
+        profile.save()
+        profile.refresh_from_db()
+    
+    return Response({
+        'status': 'success',
+        'hearts': profile.hearts
+    })
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_courses(request):

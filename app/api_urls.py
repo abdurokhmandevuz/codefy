@@ -9,6 +9,8 @@ urlpatterns = [
     
     path('user/profile/', api_views.get_user_profile, name='api_user_profile'),
     path('user/profile/update/', api_views.update_user_profile, name='api_user_profile_update'),
+    path('user/decrease-heart/', api_views.decrease_heart, name='api_decrease_heart'),
+    
     path('courses/', api_views.get_courses, name='api_courses'),
     path('lesson/<int:lesson_id>/', api_views.get_lesson_detail, name='api_lesson_detail'),
     path('lesson/<int:lesson_id>/complete/', api_views.complete_lesson, name='api_lesson_complete'),
