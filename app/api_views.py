@@ -8,6 +8,7 @@ from .models import UserProfile, Course, Lesson, LessonProgress, PracticeCard, P
 from .api_serializers import UserSerializer, CourseSerializer, LessonSerializer, PracticeCardSerializer, UserProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password
+from drf_spectacular.utils import extend_schema
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -42,6 +43,7 @@ def get_user_profile(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@extend_schema(exclude=True)
 def update_user_profile(request):
     user = request.user
     data = request.data
