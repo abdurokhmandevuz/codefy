@@ -76,6 +76,33 @@ def decrease_heart(request):
         'hearts': profile.hearts
     })
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def refill_hearts(request):
+    user = request.user
+    try:
+        profile = user.userprofile
+    except Exception:
+        from .models import UserProfile
+        profile = UserProfile.objects.create(user=user)
+        
+    COST = 20
+    if profile.coins >= COST and profile.hearts < 5:
+        profile.coins = F('coins') - COST
+        profile.hearts = 5
+        profile.save()
+        profile.refresh_from_db()
+        return Response({
+            'status': 'success',
+            'hearts': profile.hearts,
+            'coins': profile.coins
+        })
+    else:
+        return Response({
+            'status': 'error',
+            'message': 'Not enough coins or hearts already full.'
+        }, status=400)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_courses(request):

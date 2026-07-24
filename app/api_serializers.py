@@ -47,7 +47,7 @@ class PracticeTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PracticeTask
-        fields = ['id', 'title', 'description', 'initial_code', 'expected_output', 'difficulty', 'xp_reward', 'order', 'is_completed']
+        fields = ['id', 'title', 'description', 'task_type', 'options', 'correct_option', 'initial_code', 'expected_output', 'difficulty', 'xp_reward', 'order', 'is_completed']
 
     def get_is_completed(self, obj):
         user = self.context['request'].user
