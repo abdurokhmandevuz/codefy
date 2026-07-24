@@ -61,7 +61,11 @@ def update_user_profile(request):
 @extend_schema(exclude=True)
 def decrease_heart(request):
     user = request.user
-    profile = user.userprofile
+    try:
+        profile = user.userprofile
+    except Exception:
+        from .models import UserProfile
+        profile = UserProfile.objects.create(user=user)
     if profile.hearts > 0:
         profile.hearts = F('hearts') - 1
         profile.save()
@@ -111,7 +115,11 @@ def complete_lesson(request, lesson_id):
             progress.save()
             
             # Add XP
-            profile = request.user.userprofile
+            try:
+                profile = request.user.userprofile
+            except Exception:
+                from .models import UserProfile
+                profile = UserProfile.objects.create(user=request.user)
             profile.total_xp += 10
             profile.coins += 5
             profile.save()
@@ -143,7 +151,11 @@ def complete_practice_task(request, task_id):
             progress.save()
             
             # Add XP
-            profile = request.user.userprofile
+            try:
+                profile = request.user.userprofile
+            except Exception:
+                from .models import UserProfile
+                profile = UserProfile.objects.create(user=request.user)
             profile.total_xp += task.xp_reward
             profile.coins += task.xp_reward // 2
             profile.save()
