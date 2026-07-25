@@ -280,19 +280,29 @@ def get_leaderboard(request):
     return Response(leaderboard_data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_notifications(request):
-    try:
-        profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        profile = UserProfile.objects.create(user=request.user)
-        
-    if not profile.notifications_enabled:
+    enabled = True
+    user = request.user if request.user and request.user.is_authenticated else None
+    
+    if user:
+        try:
+            profile = UserProfile.objects.get(user=user)
+            enabled = profile.notifications_enabled
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+            enabled = True
+            
+    if not enabled:
         return Response({'enabled': False, 'notifications': []})
         
     from app.models import Notification
     from django.db.models import Q
-    notifications = Notification.objects.filter(Q(user=request.user) | Q(user__isnull=True)).order_by('-created_at')[:30]
+    
+    if user:
+        notifications = Notification.objects.filter(Q(user=user) | Q(user__isnull=True)).order_by('-created_at')[:30]
+    else:
+        notifications = Notification.objects.filter(user__isnull=True).order_by('-created_at')[:30]
     
     data = []
     for n in notifications:
