@@ -11,11 +11,26 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('title', 'icon_type', 'user_target', 'created_at')
     list_filter = ('icon_type', 'created_at')
     search_fields = ('title', 'message', 'user__username', 'user__email')
+    actions = ['resend_notifications']
     list_per_page = 25
 
     def user_target(self, obj):
         return obj.user.username if obj.user else "📢 Barcha foydalanuvchilar (Broadcast)"
     user_target.short_description = "Qabul qiluvchi"
+
+    @admin.action(description="📢 Tanlangan bildirishnomalarni qaytadan yuborish (Resend)")
+    def resend_notifications(self, request, queryset):
+        count = 0
+        for notification in queryset:
+            Notification.objects.create(
+                title=notification.title,
+                message=notification.message,
+                user=notification.user,
+                icon_type=notification.icon_type,
+            )
+            count += 1
+        self.message_user(request, f"{count} ta bildirishnoma qaytadan muvaffaqiyatli yuborildi!")
+
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
