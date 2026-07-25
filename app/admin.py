@@ -18,8 +18,14 @@ class NotificationAdmin(admin.ModelAdmin):
         return obj.user.username if obj.user else "📢 Barcha foydalanuvchilar (Broadcast)"
     user_target.short_description = "Qabul qiluvchi"
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        from app.fcm_utils import send_fcm_notification
+        send_fcm_notification(obj.title, obj.message)
+
     @admin.action(description="📢 Tanlangan bildirishnomalarni qaytadan yuborish (Resend)")
     def resend_notifications(self, request, queryset):
+        from app.fcm_utils import send_fcm_notification
         count = 0
         for notification in queryset:
             Notification.objects.create(
@@ -28,8 +34,9 @@ class NotificationAdmin(admin.ModelAdmin):
                 user=notification.user,
                 icon_type=notification.icon_type,
             )
+            send_fcm_notification(notification.title, notification.message)
             count += 1
-        self.message_user(request, f"{count} ta bildirishnoma qaytadan muvaffaqiyatli yuborildi!")
+        self.message_user(request, f"{count} ta bildirishnoma va FCM Push-xabarnomasi qaytadan yuborildi!")
 
 
 @admin.register(UserProfile)

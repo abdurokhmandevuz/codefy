@@ -33,4 +33,5 @@ __pycache__/
 media/
 staticfiles/
 client_secret*.json
+firebase_service_account*.json
 codefy_mobile/
