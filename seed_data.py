@@ -20,130 +20,134 @@ CareerPath.objects.create(
     title="Full-Stack Developer",
     description="Become a full-stack developer: Learn HTML, CSS, JavaScript, and React as well as NodeJS, Express, and SQL",
     icon_emoji="🎓",
-    svg_code='''<svg width="80" height="80" viewBox="0 0 100 100" fill="none"><rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/><rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/><path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/><path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/><path d="M46 54 L54 54 M50 50 L50 58" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/></svg>''',
+    svg_code='<svg></svg>',
     is_beginner_friendly=True,
     order=1
 )
-CareerPath.objects.create(
-    title="Front-End Developer",
-    description="Unlock Web Development: dive deep into HTML, CSS, and JavaScript, and conquer React",
-    icon_emoji="💻",
-    svg_code='''<svg width="80" height="80" viewBox="0 0 100 100" fill="none"><rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/><rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/><path d="M32 48 Q35 44 38 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/><path d="M62 48 Q65 44 68 48" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/><path d="M50 52 L53 55 L50 58 L47 55 Z" fill="#00d4ff"/></svg>''',
-    is_beginner_friendly=True,
-    order=2
-)
-CareerPath.objects.create(
-    title="Python Developer",
-    description="Become a Python developer: Learn the all-purpose language Python and build sophisticated programs",
-    icon_emoji="🐍",
-    svg_code='''<svg width="80" height="80" viewBox="0 0 100 100" fill="none"><rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/><rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/><path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/><path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/><rect x="44" y="55" width="12" height="4" rx="2" fill="#00d4ff"/></svg>''',
-    is_beginner_friendly=True,
-    order=3
-)
-CareerPath.objects.create(
-    title="Back-End Developer",
-    description="Become a back-end developer: Learn JavaScript, understand NodeJS, build backends with Express, and master SQL",
-    icon_emoji="⚙️",
-    svg_code='''<svg width="80" height="80" viewBox="0 0 100 100" fill="none"><rect x="25" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="65" y="60" width="10" height="20" rx="5" fill="#69688c"/><rect x="15" y="25" width="70" height="60" rx="20" fill="#e8e8f0"/><rect x="25" y="35" width="50" height="35" rx="10" fill="#0b0b1a"/><path d="M35 48 C35 45,32 45,32 48 C32 51,35 51,35 48Z" fill="#00d4ff"/><path d="M65 48 C65 45,62 45,62 48 C62 51,65 51,65 48Z" fill="#00d4ff"/><path d="M43 55 Q50 60 57 55" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/></svg>''',
-    is_beginner_friendly=True,
-    order=4
-)
 
-print("Seeding Live Sessions...")
-# Hardcode fixed datetime or delta from now
-now = timezone.now()
-LiveSession.objects.create(
-    title="Dynamic Webpages - EU",
-    datetime=now + timedelta(days=2),
-    timezone_label="Asia/Tashkent",
-    prerequisites="HTML and JavaScript fundamentals",
-    host_name="Pam",
-    going_count=4,
-    svg_badge='''<svg width="60" height="60" viewBox="0 0 100 100"><rect x="10" y="20" width="40" height="40" fill="#E44D26" rx="8"/><text x="30" y="45" fill="white" font-size="20" font-weight="bold" font-family="sans-serif" text-anchor="middle">5</text><rect x="40" y="40" width="40" height="40" fill="#F7DF1E" rx="8"/><text x="60" y="65" fill="black" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle">JS</text></svg>'''
-)
-LiveSession.objects.create(
-    title="Dynamic Webpages - US",
-    datetime=now + timedelta(days=4),
-    timezone_label="Asia/Tashkent",
-    prerequisites="HTML and JavaScript fundamentals",
-    host_name="Pam",
-    going_count=1,
-    svg_badge='''<svg width="60" height="60" viewBox="0 0 100 100"><rect x="10" y="20" width="40" height="40" fill="#E44D26" rx="8"/><text x="30" y="45" fill="white" font-size="20" font-weight="bold" font-family="sans-serif" text-anchor="middle">5</text><rect x="40" y="40" width="40" height="40" fill="#F7DF1E" rx="8"/><text x="60" y="65" fill="black" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle">JS</text></svg>'''
-)
-
-print("Seeding Practice Cards...")
-PracticeCard.objects.create(title="Real-life scenarios", description="Engage with real-life coding scenarios to apply your knowledge in practical situations", icon_emoji="💼", order=1)
-PracticeCard.objects.create(title="Review and reinforce", description="Revisit past topics to solidify your understanding and ensure long-term retention", icon_emoji="🔄", order=2)
-PracticeCard.objects.create(title="Improve problem-solving", description="Enhance your skills with challenging exercises", icon_emoji="💡", order=3)
-
-print("Seeding Course / Dashboard data...")
+print("Seeding Course & 10 Real Lessons...")
 c = Course.objects.create(title="Full-Stack Developer Career Path", description="Comprehensive path from zero to full-stack web developer.", track_type="both")
 m = Module.objects.create(course=c, title="Intro to Web Development & Python", description="Create webpages using HTML and CSS, master Python basics.", order=1)
 
-Lesson.objects.create(
-    module=m,
-    title="HTML va Python Asoslari",
-    type="theory",
-    content="HTML (HyperText Markup Language) — veb-sahifalar tuzilishini yaratuvchi standart tildir. Python esa eng ommabop dasturlash tili bo'lib, print() orqali ekranga matn chiqariladi.",
-    options=["print()", "input()", "len()", "str()"],
-    correct_option="print()",
-    initial_code="print('Hello World')",
-    expected_output="Hello World",
-    xp_reward=25,
-    coins_reward=15,
-    order=1
-)
+lessons = [
+    {
+        "order": 1,
+        "title": "HTML va Python Asoslari",
+        "content": "HTML (HyperText Markup Language) -- veb-sahifalar tuzilishini yaratuvchi standart tildir. Python esa zamonaviy va sodda dasturlash tili bo'lib, print() funksiyasi ekranga matn chiqaradi.",
+        "options": ["print()", "input()", "len()", "type()"],
+        "correct_option": "print()",
+        "initial_code": "print('Salom Codefy!')",
+        "expected_output": "Salom Codefy!",
+        "xp_reward": 15,
+        "coins_reward": 10,
+    },
+    {
+        "order": 2,
+        "title": "O'zgaruvchilar va Ma'lumot Turlari",
+        "content": "Python tilida o'zgaruvchilar ma'lumotlarni saqlash uchun idish hisoblanadi. Asosiy turlar: str (matn), int (butun son), float (o'nlik son).",
+        "options": ["str", "int", "float", "bool"],
+        "correct_option": "str",
+        "initial_code": "a = 15\nb = 25\nprint(a + b)",
+        "expected_output": "40",
+        "xp_reward": 15,
+        "coins_reward": 10,
+    },
+    {
+        "order": 3,
+        "title": "HTML Matnlar va Sarlavhalar",
+        "content": "HTMLda sarlavhalar <h1> dan <h6> gacha teglar bilan beriladi. <h1> eng katta sarlavha, <h6> eng kichigi. Paragraflar <p> tegi bilan yoziladi.",
+        "options": ["<h1>", "<head>", "<p>", "title"],
+        "correct_option": "<h1>",
+        "initial_code": "name = 'Python'\nprint('Men ' + name + ' o\'rganyapman')",
+        "expected_output": "Men Python o'rganyapman",
+        "xp_reward": 20,
+        "coins_reward": 15,
+    },
+    {
+        "order": 4,
+        "title": "Shart Operatorlari (if, else)",
+        "content": "if va else kalit so'zlari yordamida dasturda mantiqiy shartlar tekshiriladi va ma'lum bir kod bloki bajariladi.",
+        "options": ["if", "for", "def", "import"],
+        "correct_option": "if",
+        "initial_code": "ball = 90\nif ball >= 80:\n    print('A\'lo')",
+        "expected_output": "A'lo",
+        "xp_reward": 20,
+        "coins_reward": 15,
+    },
+    {
+        "order": 5,
+        "title": "Ro'yxatlar (Lists)",
+        "content": "Python'da ro'yxatlar bir nechta elementni bitta o'zgaruvchida saqlash imkonini beradi. Ro'yxat kvadrat qavslar [] bilan yaratiladi.",
+        "options": ["[]", "{}", "()", "<>"],
+        "correct_option": "[]",
+        "initial_code": "mevalar = ['Olma', 'Banan', 'Uzum']\nprint(mevalar[0])",
+        "expected_output": "Olma",
+        "xp_reward": 25,
+        "coins_reward": 15,
+    },
+    {
+        "order": 6,
+        "title": "Sikllar (for loop)",
+        "content": "for sikli ro'yxat yoki ketma-ketlikdagi har bir element bo'ylab takrorlanuvchi amallarni bajarish uchun ishlatiladi.",
+        "options": ["for", "while", "if", "range"],
+        "correct_option": "for",
+        "initial_code": "for i in range(3):\n    print('Codefy')",
+        "expected_output": "Codefy\nCodefy\nCodefy",
+        "xp_reward": 25,
+        "coins_reward": 20,
+    },
+    {
+        "order": 7,
+        "title": "Funksiyalar (def)",
+        "content": "Funksiya -- muayyan vazifani bajaradigan va qayta ishlatiladigan kod blokidir. U def kalit so'zi bilan e'lon qilinadi.",
+        "options": ["def", "func", "function", "create"],
+        "correct_option": "def",
+        "initial_code": "def salomlashtir(ism):\n    print('Salom ' + ism)\nsalomlashtir('Ali')",
+        "expected_output": "Salom Ali",
+        "xp_reward": 30,
+        "coins_reward": 20,
+    },
+    {
+        "order": 8,
+        "title": "HTML Havolalar va Rasmlar",
+        "content": "HTMLda havolalar <a> tegi bilan, rasmlar esa <img> tegi bilan sahifaga joylashtiriladi.",
+        "options": ["<a>", "<img>", "<link>", "<src>"],
+        "correct_option": "<a>",
+        "initial_code": "yosh = 18\nif yosh >= 18:\n    print('Ruxsat berildi')",
+        "expected_output": "Ruxsat berildi",
+        "xp_reward": 30,
+        "coins_reward": 20,
+    },
+    {
+        "order": 9,
+        "title": "Lug'atlar (Dictionaries)",
+        "content": "Lug'at (Dictionary) kalit va qiymat (key: value) juftliklarini figura qavslar {} yordamida saqlaydi.",
+        "options": ["{}", "[]", "()", "set()"],
+        "correct_option": "{}",
+        "initial_code": "user = {'ism': 'Otabek', 'yosh': 20}\nprint(user['ism'])",
+        "expected_output": "Otabek",
+        "xp_reward": 35,
+        "coins_reward": 25,
+    },
+    {
+        "order": 10,
+        "title": "Mini Loyiha: Shaxsiy Profil Veb-Sahifasi",
+        "content": "Tabriklaymiz! Siz 10-darsga yetib keldingiz. Ushbu mini loyihada HTML va Python bilimlaridan foydalanib, foydalanuvchi profilini yaratasiz.",
+        "options": ["HTML + Python", "Faqat CSS", "Faqat SQL", "Hech qaysi"],
+        "correct_option": "HTML + Python",
+        "initial_code": "ism = 'Codefy O\'quvchisi'\nprint('Tabriklaymiz, ' + ism + '!')",
+        "expected_output": "Tabriklaymiz, Codefy O'quvchisi!",
+        "xp_reward": 50,
+        "coins_reward": 30,
+        "is_guided_project": True
+    }
+]
 
-Lesson.objects.create(
-    module=m,
-    title="Matnlar va Sarlavhalar",
-    type="theory",
-    content="HTMLda sarlavhalar <h1> dan <h6> gacha teglar bilan beriladi. Python-da matnlar 'str' (string) ma'lumot turiga kiradi.",
-    options=["str", "int", "float", "bool"],
-    correct_option="str",
-    initial_code="a = 5\nb = 10\nprint(a + b)",
-    expected_output="15",
-    xp_reward=25,
-    coins_reward=15,
-    order=2
-)
-
-Lesson.objects.create(
-    module=m,
-    title="O'zgaruvchilar va Shartlar",
-    type="theory",
-    content="O'zgaruvchilar ma'lumotlarni saqlaydi. Python'da 'if' iborasi yordamida shartlar tekshiriladi.",
-    options=["if", "for", "while", "def"],
-    correct_option="if",
-    initial_code="x = 10\nif x > 5:\n    print('Katta')",
-    expected_output="Katta",
-    xp_reward=30,
-    coins_reward=20,
-    order=3
-)
-
-Lesson.objects.create(
-    module=m,
-    title="Linktree Mini Loyihasi",
-    type="theory",
-    description="Shaxsiy havola va ijtimoiy tarmoqlar sahifangizni yaratuvchi mini loyiha.",
-    content="Tabriklaymiz! Ushbu amaliy loyihada HTML va Python yordamida birinchi shaxsiy veb-havola kartangizni yaratasiz.",
-    options=["html", "css", "python", "barchasi"],
-    correct_option="barchasi",
-    initial_code="name = 'Codefy'\nprint('Welcome to ' + name)",
-    expected_output="Welcome to Codefy",
-    xp_reward=50,
-    coins_reward=30,
-    order=4,
-    is_guided_project=True
-)
-
-print("Seeding default user...")
-user, created = User.objects.get_or_create(username="demo", defaults={"email": "demo@codefy.uz"})
-if created:
-    user.set_password("password123")
-    user.save()
-from app.models import UserProfile
-profile, _ = UserProfile.objects.get_or_create(user=user)
+for l_data in lessons:
+    Lesson.objects.create(
+        module=m,
+        type='theory',
+        **l_data
+    )
 
 print("Seed complete.")
