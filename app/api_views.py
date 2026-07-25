@@ -263,7 +263,7 @@ def complete_practice_task(request, task_id):
 @permission_classes([IsAuthenticated])
 def get_leaderboard(request):
     # Fetch top 100 users ordered by total_xp descending
-    profiles = UserProfile.objects.filter(total_xp__gt=0).order_by('-total_xp')[:100]
+    profiles = UserProfile.objects.all().order_by('-total_xp')[:100]
     leaderboard_data = []
     
     for idx, profile in enumerate(profiles):

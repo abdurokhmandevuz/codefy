@@ -87,12 +87,18 @@ class LessonProgress(models.Model):
         ('in_progress', 'In Progress'),
         ('completed', 'Completed')
     ], default='locked')
+    current_step = models.CharField(max_length=20, choices=[
+        ('theory', 'Theory'),
+        ('test', 'Test'),
+        ('practice', 'Practice'),
+        ('completed', 'Completed')
+    ], default='theory')
     
     class Meta:
         unique_together = ('user', 'lesson')
 
     def __str__(self):
-        return f"{self.user.username} - {self.lesson.title}: {self.status}"
+        return f"{self.user.username} - {self.lesson.title} ({self.status} / {self.current_step})"
 
 class GameLevel(models.Model):
     level_number = models.IntegerField(unique=True)

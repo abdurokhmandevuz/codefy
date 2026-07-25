@@ -33,3 +33,4 @@ __pycache__/
 media/
 staticfiles/
 client_secret*.json
+codefy_mobile/

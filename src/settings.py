@@ -61,9 +61,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
+# Persistent database location for Railway Volume support
+data_dir = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data')
+if os.path.exists(data_dir) and os.access(data_dir, os.W_OK):
+    default_db_path = 'sqlite:///' + os.path.join(data_dir, 'db.sqlite3')
+else:
+    default_db_path = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        default=default_db_path,
         conn_max_age=600
     )
 }

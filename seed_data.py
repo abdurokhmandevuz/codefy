@@ -82,79 +82,59 @@ m = Module.objects.create(course=c, title="Intro to Web Development & Python", d
 
 Lesson.objects.create(
     module=m,
-    title="Discovering HTML and Tags",
+    title="HTML va Python Asoslari",
     type="theory",
-    content="HTML (HyperText Markup Language) — veb-sahifalar tuzilishini yaratuvchi standart tildir. Teglar yordamida kontent tuzilmasi beriladi.",
-    xp_reward=10,
-    coins_reward=5,
-    order=1
-)
-Lesson.objects.create(
-    module=m,
-    title="Python Print Test",
-    type="test",
-    content="Python tilida matnni ekranga chiqarish uchun qaysi funksiya ishlatiladi?",
+    content="HTML (HyperText Markup Language) — veb-sahifalar tuzilishini yaratuvchi standart tildir. Python esa eng ommabop dasturlash tili bo'lib, print() orqali ekranga matn chiqariladi.",
     options=["print()", "input()", "len()", "str()"],
     correct_option="print()",
-    xp_reward=15,
-    coins_reward=10,
-    order=2
-)
-Lesson.objects.create(
-    module=m,
-    title="Hello World Coding Challenge",
-    type="code",
-    content="Chiqaruvchi dastur yozing va 'Hello World' chop eting.",
     initial_code="print('Hello World')",
     expected_output="Hello World",
-    xp_reward=20,
+    xp_reward=25,
     coins_reward=15,
-    order=3,
-    is_practice=True,
-    is_supercharge=True
+    order=1
 )
+
 Lesson.objects.create(
     module=m,
-    title="Structuring Text with Tags",
+    title="Matnlar va Sarlavhalar",
     type="theory",
-    content="HTMLda sarlavhalar <h1> dan <h6> gacha bo'lgan teglar bilan aniqlanadi. <h1> eng katta sarlavhadir.",
-    xp_reward=10,
-    coins_reward=5,
-    order=4
-)
-Lesson.objects.create(
-    module=m,
-    title="Data Types Quiz",
-    type="test",
-    content="Python-da 'Hello' qaysi ma'lumot turiga kiradi?",
+    content="HTMLda sarlavhalar <h1> dan <h6> gacha teglar bilan beriladi. Python-da matnlar 'str' (string) ma'lumot turiga kiradi.",
     options=["str", "int", "float", "bool"],
     correct_option="str",
-    xp_reward=15,
-    coins_reward=10,
-    order=5
-)
-Lesson.objects.create(
-    module=m,
-    title="Sum Calculation Code Challenge",
-    type="code",
-    content="5 va 10 sonlarining yig'indisini ekranga chiqaring.",
     initial_code="a = 5\nb = 10\nprint(a + b)",
     expected_output="15",
     xp_reward=25,
     coins_reward=15,
-    order=6,
-    is_practice=True,
-    is_supercharge=True
+    order=2
 )
+
 Lesson.objects.create(
     module=m,
-    title="Linktree",
+    title="O'zgaruvchilar va Shartlar",
     type="theory",
-    description="Get ready to build your very own Linktree-style page, where you can showcase all your socials and other links you care about in one spot.",
-    content="Linktree loyihasini yaratish bo'yicha ko'rsatmalar...",
+    content="O'zgaruvchilar ma'lumotlarni saqlaydi. Python'da 'if' iborasi yordamida shartlar tekshiriladi.",
+    options=["if", "for", "while", "def"],
+    correct_option="if",
+    initial_code="x = 10\nif x > 5:\n    print('Katta')",
+    expected_output="Katta",
+    xp_reward=30,
+    coins_reward=20,
+    order=3
+)
+
+Lesson.objects.create(
+    module=m,
+    title="Linktree Mini Loyihasi",
+    type="theory",
+    description="Shaxsiy havola va ijtimoiy tarmoqlar sahifangizni yaratuvchi mini loyiha.",
+    content="Tabriklaymiz! Ushbu amaliy loyihada HTML va Python yordamida birinchi shaxsiy veb-havola kartangizni yaratasiz.",
+    options=["html", "css", "python", "barchasi"],
+    correct_option="barchasi",
+    initial_code="name = 'Codefy'\nprint('Welcome to ' + name)",
+    expected_output="Welcome to Codefy",
     xp_reward=50,
     coins_reward=30,
-    order=7,
+    order=4,
     is_guided_project=True
 )
 
