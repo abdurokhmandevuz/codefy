@@ -48,19 +48,49 @@ class SupabaseAuthentication(authentication.BaseAuthentication):
             user_data = response.json()
             supabase_user_id = user_data.get('id')
             email = user_data.get('email', '')
+            user_metadata = user_data.get('user_metadata', {})
+            
+            full_name = user_metadata.get('full_name', '')
+            first_name = user_metadata.get('first_name', '')
+            last_name = user_metadata.get('last_name', '')
+            
+            if not first_name and full_name:
+                parts = full_name.strip().split(' ')
+                first_name = parts[0]
+                if len(parts) > 1:
+                    last_name = ' '.join(parts[1:])
+                    
+            if not first_name and email:
+                first_name = email.split('@')[0]
             
             if not supabase_user_id:
                 raise exceptions.AuthenticationFailed('User ID not found in Supabase response')
                 
             # Find or create Django user
-            # We use the Supabase UUID as the Django username
             user, created = User.objects.get_or_create(
                 username=supabase_user_id,
                 defaults={
                     'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
                     'is_active': True,
                 }
             )
+            
+            # Update user info if missing or updated
+            updated = False
+            if user.email != email and email:
+                user.email = email
+                updated = True
+            if not user.first_name and first_name:
+                user.first_name = first_name
+                updated = True
+            if not user.last_name and last_name:
+                user.last_name = last_name
+                updated = True
+                
+            if updated:
+                user.save()
             
             # Ensure UserProfile exists
             from app.models import UserProfile
