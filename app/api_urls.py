@@ -18,4 +18,7 @@ urlpatterns = [
     path('practice/', api_views.get_practice_cards, name='api_practice_cards'),
     path('practice/task/<int:task_id>/complete/', api_views.complete_practice_task, name='api_practice_task_complete'),
     path('leaderboard/', api_views.get_leaderboard, name='api_leaderboard'),
+    path('notifications/', api_views.get_notifications, name='api_notifications'),
+    path('notifications/toggle/', api_views.toggle_notifications, name='api_notifications_toggle'),
 ]
+

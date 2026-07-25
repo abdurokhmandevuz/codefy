@@ -3,13 +3,24 @@ from .models import (
     Course, Module, Lesson, Badge, UserProfile, GameLevel, UserGameScore,
     LessonProgress, CareerPath, LiveSession, PracticeCard, PracticeTask, PracticeTaskProgress, LandingGoal, 
     LandingFeature, TechTag, LandingReview, Achievement, UserAchievement, 
-    Friendship, Project, ProjectFile, BannedWord, Discussion, Comment, Like, Report
+    Friendship, Project, ProjectFile, BannedWord, Discussion, Comment, Like, Report, Notification
 )
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'icon_type', 'user_target', 'created_at')
+    list_filter = ('icon_type', 'created_at')
+    search_fields = ('title', 'message', 'user__username', 'user__email')
+    list_per_page = 25
+
+    def user_target(self, obj):
+        return obj.user.username if obj.user else "📢 Barcha foydalanuvchilar (Broadcast)"
+    user_target.short_description = "Qabul qiluvchi"
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'coins', 'streak_days', 'total_xp', 'league', 'chosen_path')
-    list_filter = ('league', 'chosen_path', 'is_pro')
+    list_display = ('user', 'coins', 'streak_days', 'total_xp', 'league', 'notifications_enabled', 'is_pro')
+    list_filter = ('league', 'notifications_enabled', 'is_pro')
     search_fields = ('user__username', 'user__email')
     readonly_fields = ('user',)
     list_per_page = 25

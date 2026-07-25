@@ -71,6 +71,7 @@ class UserProfile(models.Model):
     bio = models.TextField(blank=True)
     
     is_pro = models.BooleanField(default=False)
+    notifications_enabled = models.BooleanField(default=True)
     onboarding_complete = models.BooleanField(default=False)
     completed_lessons = models.ManyToManyField(Lesson, blank=True)
     earned_badges = models.ManyToManyField(Badge, blank=True)
@@ -343,3 +344,25 @@ class Report(models.Model):
 
     def __str__(self):
         return f"Report by {self.user.username} ({self.reason})"
+
+class Notification(models.Model):
+    ICON_CHOICES = [
+        ('info', 'Ma\'lumot (Info)'),
+        ('announcement', 'E\'lon (Announcement)'),
+        ('reward', 'Mukofot (Reward)'),
+        ('system', 'Tizim (System)')
+    ]
+
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, help_text="Bo'sh qoldirilsa, barcha foydalanuvchilarga yuboriladi.")
+    icon_type = models.CharField(max_length=50, choices=ICON_CHOICES, default='info')
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        target = self.user.username if self.user else "Barcha foydalanuvchilar (Broadcast)"
+        return f"[{target}] {self.title}"

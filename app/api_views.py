@@ -278,3 +278,49 @@ def get_leaderboard(request):
         })
         
     return Response(leaderboard_data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_notifications(request):
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+        
+    if not profile.notifications_enabled:
+        return Response({'enabled': False, 'notifications': []})
+        
+    from app.models import Notification
+    from django.db.models import Q
+    notifications = Notification.objects.filter(Q(user=request.user) | Q(user__isnull=True)).order_by('-created_at')[:30]
+    
+    data = []
+    for n in notifications:
+        data.append({
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'icon_type': n.icon_type,
+            'is_read': n.is_read,
+            'created_at': n.created_at.strftime('%Y-%m-%d %H:%M')
+        })
+        
+    return Response({'enabled': True, 'notifications': data})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_notifications(request):
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+        
+    enabled = request.data.get('enabled')
+    if enabled is not None:
+        profile.notifications_enabled = bool(enabled)
+    else:
+        profile.notifications_enabled = not profile.notifications_enabled
+    profile.save()
+    
+    return Response({'status': 'success', 'notifications_enabled': profile.notifications_enabled})
+
