@@ -32,3 +32,4 @@ __pycache__/
 # db.sqlite3
 media/
 staticfiles/
+client_secret*.json
